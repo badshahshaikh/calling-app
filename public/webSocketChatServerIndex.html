@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAPID Example</title>
+</head>
+<body>
+    <h1>Chat</h1>
+    <button id="subscribeButton" onclick="registerPush()">Subscribe</button>
+    <button id="sendPush" onclick="sendPush()">sendPush</button>
+    <button id="sendPush" onclick="sendPushToReg()">sendPush to registered</button>
+
+    <!-- <input id="messageInput" type="text" placeholder="Type a message..." />
+    <button onclick="sendMessage()">Send</button>
+    <ul id="messages"></ul> -->
+    <br>
+    <br>
+    <br>
+    <br>
+    <input id="userID" type="text" placeholder="Enter your user ID" />
+    <button onclick="connect()">Connect</button>
+
+    <br>
+    <br>
+    
+    <input id="messageInput" type="text" placeholder="Type a message..." />
+    <button onclick="sendMessage()">Send</button>
+    <ul id="messages"></ul>
+    
+
+    <br>
+    <br>
+    <video id="localVideo" autoplay muted></video>
+    <video id="remoteVideo" autoplay></video>
+
+    <h2>Clients</h2>
+    <ul id="clientList"></ul>
+
+    <button id="callButton" disabled>Call</button>
+
+    <script>
+        // Fetch VAPID keys from the server 
+        // fetch('/vapid-keys')
+        //     .then(response => response.json())
+        //     .then(keys => {
+        //         const publicKey = keys.publicKey;
+        //         console.log(keys)
+        //         // Register the service worker
+        //         navigator.serviceWorker.register('sw.js')
+        //             .then(registration => {
+        //                 console.log('Service Worker registered:', registration);
+
+        //                 // Request permission for notifications
+        //                 return Notification.requestPermission()
+        //                     .then(permission => {
+        //                         if (permission === 'granted') {
+        //                             console.log('Notification permission granted.');
+
+        //                             // Subscribe for push notifications
+        //                             return registration.pushManager.subscribe({
+        //                                 userVisibleOnly: true,
+        //                                 applicationServerKey: urlBase64ToUint8Array(publicKey)
+        //                             });
+        //                         } else {
+        //                             console.error('Notification permission denied.');
+        //                         }
+        //                     });
+        //             })
+        //             .then(subscription => {
+        //                 console.log('Push Subscription:', subscription);
+        //             })
+        //             .catch(error => {
+        //                 console.error('Service Worker registration or subscription failed:', error);
+        //             });
+        //     })
+        //     .catch(error => {
+        //         console.error('Failed to fetch VAPID keys:', error);
+        //     });
+
+        // // Utility function to convert URL-safe base64 to Uint8Array
+        // function urlBase64ToUint8Array(base64String) {
+        //     const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        //     const base64 = (base64String + padding)
+        //         .replace(/\-/g, '+')
+        //         .replace(/_/g, '/');
+
+        //     const rawData = window.atob(base64);
+        //     const outputArray = new Uint8Array(rawData.length);
+
+        //     for (let i = 0; i < rawData.length; ++i) {
+        //         outputArray[i] = rawData.charCodeAt(i);
+        //     }
+
+        //     return outputArray;
+        // }
+    
+    </script>
+
+    <script>
+
+        const publicKey = 'BEC38Af29mqsfaLoDJCw5YN0Ywg7HJsR_2pyvmaL_u6zFO4vhEn_L8pH4qAjIv3GlrhxSfD2o53m_wku9BhI8Qo';
+
+        if ( 'serviceWorker' in navigator ){
+            send().catch(err=>console.error(err));
+        }
+        let subscription = {};
+        let register = {};
+
+
+        // register service worker in current session
+        async function send(){
+            console.log('registering service worker...');
+            register = await navigator.serviceWorker.register('/sw.js',{
+                scope : '/'
+            });
+            console.log('register - ',register);
+            console.log('Service Worker Register......');
+
+
+            // console.log('registering push....');
+            // subscription = await register.pushManager.subscribe({
+            //     userVisibleOnly: true,
+            //     applicationServerKey: urlBase64ToUint8Array(publicKey)
+            // })
+            // console.log('registering push....');
+            // console.log('Push registered....');
+
+
+            // console.log('sending push....');
+            // await fetch("/subscribe",{
+            //     method:'POST',
+            //     body: JSON.stringify(subscription),
+            //     headers:{
+            //         'content-type':'application/json'
+            //     }
+            // });
+            // console.log('push sent....');
+
+
+        }
+
+        // send push to current session 
+        async function sendPush(){
+
+            try {
+                const response = await fetch("/subscribe", {
+                    method: 'POST', 
+                    headers: {
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify(subscription) 
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const responseData = await response.json();
+                console.log('Data received:', responseData);
+                return responseData;
+            } catch (error) {
+                if (error.name === 'TypeError') {
+                    console.error('Network error:', error);
+                    alert('Network error. Please check your internet connection and try again.');
+                } else {
+                    console.error('HTTP error:', error);
+                    alert('Failed to fetch data. Server returned an error. Please try again later.');
+                }
+            }
+
+        }
+
+        // send push to all session which is reg in past 
+        async function sendPushToReg(){
+            try {
+                
+                const response = await fetch("/sendPushToReg", {
+                    method: 'POST', 
+                    headers: {
+                        'Content-Type': 'application/json' 
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const responseData = await response.json();
+                console.log('response :', responseData);
+                return responseData;
+            } catch (error) {
+                if (error.name === 'TypeError') {
+                    console.error('Network error:', error);
+                    alert('Network error. Please check your internet connection and try again.');
+                } else {
+                    console.error('HTTP error:', error);
+                    alert('Failed to fetch data. Server returned an error. Please try again later.');
+                }
+            }
+        }
+
+        // regeistor push in database 
+        async function registerPush(){
+            console.log('registering push....');
+            subscription = await register.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(publicKey)
+            })
+            
+            try {
+                const response = await fetch("/regPush", {
+                    method: 'POST', 
+                    headers: {
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify(subscription) 
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                console.log('Push registered....');
+                const responseData = await response.json();
+                console.log('Data received:', responseData);
+                return responseData;
+            } catch (error) {
+                if (error.name === 'TypeError') {
+                    console.error('Network error:', error);
+                    alert('Network error. Please check your internet connection and try again.');
+                } else {
+                    console.error('HTTP error:', error);
+                    alert('Failed to fetch data. Server returned an error. Please try again later.');
+                }
+            }
+
+        }
+
+
+        function urlBase64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4);
+            const base64 = (base64String + padding)
+                .replace(/\-/g, '+')
+                .replace(/_/g, '/');
+
+            const rawData = window.atob(base64);
+            const outputArray = new Uint8Array(rawData.length);
+
+            for (let i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+            }
+
+            return outputArray;
+        }
+
+
+        // const ws = new WebSocket('ws://localhost:3000');
+
+        // ws.onopen = () => {
+        // console.log('Connected to the server');
+        // };
+
+        // ws.onmessage = (event) => {
+        //     const messages = document.getElementById('messages');
+        //     const message = document.createElement('li');
+        //     message.textContent = event.data;
+        //     messages.appendChild(message);
+        // };
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            ws.send(input.value);
+            const messages = document.getElementById('messages');
+            const message = document.createElement('li');
+            message.textContent = input.value;
+            messages.appendChild(message);
+            input.value = '';
+        }
+
+        const localVideo = document.getElementById('localVideo');
+        const remoteVideo = document.getElementById('remoteVideo');
+        const clientList = document.getElementById('clientList');
+        const callButton = document.getElementById('callButton');
+
+        
+        let localStream;
+        let peerConnection;
+        let clientId;
+        const config = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+
+        // get permission for audio and video
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            .then(stream => {
+                localVideo.srcObject = stream;
+                localStream = stream;
+            })
+            .catch(error => console.error('Error accessing media devices.', error));
+
+
+        
+    
+        function blobToJson(blob) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+
+                reader.onload = () => {
+                try {
+                    const json = JSON.parse(reader.result);
+                    resolve(json);
+                } catch (error) {
+                    reject(error);
+                }
+                };
+
+                reader.onerror = () => {
+                    reject(reader.error);
+                };
+
+                reader.readAsText(blob);
+            });
+        }
+
+
+        function connect() {
+            const userID = document.getElementById('userID').value;
+            ws = new WebSocket(`ws://localhost:3000?userID=${userID}`);
+
+            ws.onopen = () => {
+                console.log('Connected to the server');
+            };
+
+            ws.onmessage = async (event) => {
+                const messages = document.getElementById('messages');
+                const message = document.createElement('li');
+                
+                // messages.appendChild(message);
+                // console.log(event)
+                // alert('new message');
+
+
+                // websocket text messages 
+                if (event.data instanceof Blob) {
+                    // const reader = new FileReader();
+                    // reader.onload = () => {
+                    // console.log('Message from server:', reader.result);
+                    // message.textContent = reader.result;
+                    // messages.appendChild(message);
+                    // };
+                    // reader.readAsText(event.data);
+
+                    blobToJson(event.data)
+                        .then(json => {
+                            console.log('JSON:', json);
+                        })
+                        .catch(error => {
+                            console.error('Error converting Blob to JSON:', error);
+                        });
+
+
+                } else {
+                    console.log('Message from server:', event.data);
+                    message.textContent = reader.result;
+                    messages.appendChild(message);
+                }
+
+                
+
+                // webretc handling 
+                const data = JSON.parse(event.data);
+                if (data.id) {
+                    clientId = data.id;
+                    console.log(`Your client ID: ${clientId}`);
+                } else if (data.clientIds) {
+                    updateClientList(data.clientIds);
+                } else if (data.offer) {
+                    await handleOffer(data.offer, data.from);
+                } else if (data.answer) {
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+                } else if (data.iceCandidate) {
+                    await peerConnection.addIceCandidate(new RTCIceCandidate(data.iceCandidate));
+                }
+
+                
+            };
+
+            ws.onclose = () => {
+                console.log('Disconnected from the server');
+            };
+        }
+
+
+        // Handle incoming call offer
+        async function handleOffer(offer, from) {
+            peerConnection = createPeerConnection(from);
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+            const answer = await peerConnection.createAnswer();
+            await peerConnection.setLocalDescription(answer);
+            socket.send(JSON.stringify({ to: from, answer }));
+        }
+
+        function createPeerConnection(to) {
+            const pc = new RTCPeerConnection(config);
+
+            localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+
+            pc.onicecandidate = event => {
+                if (event.candidate) {
+                socket.send(JSON.stringify({ to, iceCandidate: event.candidate }));
+                }
+            };
+
+            pc.ontrack = event => {
+                remoteVideo.srcObject = event.streams[0];
+            };
+
+            return pc;
+        }
+
+
+        // Make a call
+        async function makeCall(to) {
+            peerConnection = createPeerConnection(to);
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+            socket.send(JSON.stringify({ to, offer }));
+        }
+
+
+        function updateClientList(clientIds) {
+            clientList.innerHTML = '';
+
+            clientIds.forEach(id => {
+                if (id !== clientId) {
+                const listItem = document.createElement('li');
+                listItem.textContent = id;
+                listItem.addEventListener('click', () => {
+                    selectedClientId = id;
+                    callButton.disabled = false;
+                });
+                clientList.appendChild(listItem);
+                }
+            });
+        }
+
+
+        callButton.addEventListener('click', () => {
+            if (selectedClientId) {
+                makeCall(selectedClientId);
+            }
+        });
+
+
+
+
+
+
+
+
+    </script>
+    
+</body>
+</html>

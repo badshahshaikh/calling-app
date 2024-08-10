@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebRTC Example</title>
+</head>
+<body>
+  <h1>WebRTC Example</h1>
+  <input id="sessionId" type="text" placeholder="Enter Session ID">
+  <button id="joinButton">Join Call</button>
+  <button id="callButton">Start Call</button>
+  <video id="localVideo" autoplay muted></video>
+  <video id="remoteVideo" autoplay></video>
+
+  <input id="messageInput" type="text" placeholder="Type a message..." />
+  <button onclick="sendMessage()">Send</button>
+  <ul id="messages"></ul>
+  <!-- <button id="callButton">Start Call</button> -->
+  <script>
+    
+    const localVideo = document.getElementById('localVideo');
+    const remoteVideo = document.getElementById('remoteVideo');
+
+    let ws;
+
+    let localStream;
+    let remoteStream;
+    let peerConnection;
+    const configuration = {
+      iceServers: [
+        {
+          urls: 'stun:stun.l.google.com:19302'
+        }
+      ]
+    };
+
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      .then(stream => {
+        localVideo.srcObject = stream;
+        localStream = stream;
+
+        // ws.addEventListener('open', () => {
+        //   console.log('WebSocket connection opened');
+        // });
+      })
+      .catch(error => console.error('Error accessing media devices.', error));
+
+
+    document.getElementById('joinButton').addEventListener('click', () => {
+      const sessionId = document.getElementById('sessionId').value;
+      console.log(window.location.hostname);
+      // let websocketUrl = 
+      ws = new WebSocket(`ws://${window.location.hostname}:${window.location.port}?sessionId=${sessionId}`);
+      console.log(ws);
+      ws.addEventListener('open', () => {
+        console.log('WebSocket connection opened');
+      });
+
+      ws.addEventListener('message', (message) => {
+
+        console.log(message.data);
+
+        message.data.text().then(text => {
+
+          // try {
+          //     const parsedData = JSON.parse(jsonString);
+          //     console.log(parsedData); // Handle your parsed data here
+          // } catch (error) {
+          //     console.error('Error parsing JSON:', error);
+          // }
+
+          const messages1 = document.getElementById('messages');
+          const message1 = document.createElement('li');
+          message1.textContent = text;
+          messages1.appendChild(message1);
+
+          const parsedMessage = JSON.parse(text);
+          handleSignalingData(parsedMessage);
+
+        });
+
+        // if (message.data instanceof Blob) {
+
+        //   blobToJson(message.data)
+        //       .then(json => {
+        //           console.log('JSON:', json);
+        //       })
+        //       .catch(error => {
+        //           console.error('Error converting Blob to JSON:', error);
+        //       });
+
+
+        // } else {
+        //     console.log('Message from server:', message.data);
+        //     message.textContent = reader.result;
+        //     messages.appendChild(message);
+        // }
+
+
+      });
+
+      ws.addEventListener('close', (event) => {
+        console.log('WebSocket connection closed:', event);
+        console.log('Code:', event.code, 'Reason:', event.reason);
+      });
+
+
+      ws.addEventListener('error', (error) => {
+        console.error('WebSocket error', error);
+      });
+
+
+
+    });
+
+    function sendMessage() {
+        const input = document.getElementById('messageInput');
+        ws.send(input.value);
+        const messages = document.getElementById('messages');
+        const message = document.createElement('li');
+        message.textContent = input.value;
+        messages.appendChild(message);
+        input.value = '';
+    }
+
+        
+    function blobToJson(blob) {
+      return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+
+          reader.onload = () => {
+          try {
+              const json = JSON.parse(reader.result);
+              resolve(json);
+          } catch (error) {
+              reject(error);
+          }
+          };
+
+          reader.onerror = () => {
+          reject(reader.error);
+          };
+
+          reader.readAsText(blob);
+      });
+    }
+
+
+    function handleSignalingData(data) {
+      switch (data.type) {
+        case 'offer':
+          handleOffer(data.offer);
+          break;
+        case 'answer':
+          handleAnswer(data.answer);
+          break;
+        case 'candidate':
+          handleCandidate(data.candidate);
+          break;
+        default:
+          break;
+      }
+    }
+
+    function handleOffer(offer) {
+      createPeerConnection();
+      peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+      peerConnection.createAnswer()
+        .then(answer => {
+          peerConnection.setLocalDescription(answer);
+          ws.send(JSON.stringify({ type: 'answer', answer }));
+        })
+        .catch(error => console.error('Error creating answer', error));
+    }
+
+    function handleAnswer(answer) {
+      peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+    }
+
+    function handleCandidate(candidate) {
+      peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+    }
+
+
+
+    document.getElementById('callButton').addEventListener('click', () => {
+      createPeerConnection();
+
+      peerConnection.createOffer()
+        .then(offer => {
+          peerConnection.setLocalDescription(offer);
+          ws.send(JSON.stringify({ type: 'offer', offer }));
+        })
+        .catch(error => console.error('Error creating offer', error));
+    });
+
+
+
+    // ws.addEventListener('message', (message) => {
+    //   // const parsedMessage = JSON.parse(message.data);
+    //   // switch (parsedMessage.type) {
+    //   //   case 'offer':
+    //   //     createPeerConnection();
+    //   //     peerConnection.setRemoteDescription(new RTCSessionDescription(parsedMessage.offer));
+    //   //     peerConnection.createAnswer()
+    //   //       .then(answer => {
+    //   //         peerConnection.setLocalDescription(answer);
+    //   //         ws.send(JSON.stringify({ type: 'answer', answer }));
+    //   //       });
+    //   //     break;
+    //   //   case 'answer':
+    //   //     peerConnection.setRemoteDescription(new RTCSessionDescription(parsedMessage.answer));
+    //   //     break;
+    //   //   case 'candidate':
+    //   //     peerConnection.addIceCandidate(new RTCIceCandidate(parsedMessage.candidate));
+    //   //     break;
+    //   // }
+
+    //   message.data.text().then(text => {
+    //     const parsedMessage = JSON.parse(text);
+    //     switch (parsedMessage.type) {
+    //       case 'offer':
+    //         createPeerConnection();
+    //         peerConnection.setRemoteDescription(new RTCSessionDescription(parsedMessage.offer));
+    //         peerConnection.createAnswer()
+    //           .then(answer => {
+    //             peerConnection.setLocalDescription(answer);
+    //             ws.send(JSON.stringify({ type: 'answer', answer }));
+    //           });
+    //         break;
+    //       case 'answer':
+    //         peerConnection.setRemoteDescription(new RTCSessionDescription(parsedMessage.answer));
+    //         break;
+    //       case 'candidate':
+    //         peerConnection.addIceCandidate(new RTCIceCandidate(parsedMessage.candidate));
+    //         break;
+    //     }
+    //   });
+    // });
+
+    function createPeerConnection() {
+      peerConnection = new RTCPeerConnection(configuration);
+
+      peerConnection.addEventListener('icecandidate', event => {
+        if (event.candidate) {
+          ws.send(JSON.stringify({ type: 'candidate', candidate: event.candidate }));
+        }
+      });
+
+      peerConnection.addEventListener('track', event => {
+        remoteVideo.srcObject = event.streams[0];
+      });
+
+      localStream.getTracks().forEach(track => {
+        peerConnection.addTrack(track, localStream);
+      });
+    }
+
+    // document.getElementById('callButton').addEventListener('click', () => {
+    //   createPeerConnection();
+
+    //   peerConnection.createOffer()
+    //     .then(offer => {
+    //       peerConnection.setLocalDescription(offer);
+    //       ws.send(JSON.stringify({ type: 'offer', offer }));
+    //     });
+    // });
+    
+  </script>
+  
+</body>
+</html>
