@@ -49,7 +49,12 @@
       const sessionId = document.getElementById('sessionId').value;
       console.log(window.location.hostname);
       // let websocketUrl = 
-      ws = new WebSocket(`ws://${window.location.hostname}:${window.location.port}?sessionId=${sessionId}`);
+      if ( window.location.protocol == "https:" ){
+        ws = new WebSocket(`wss://${window.location.hostname}:${window.location.port}?sessionId=${sessionId}`);
+      }else{
+        ws = new WebSocket(`ws://${window.location.hostname}:${window.location.port}?sessionId=${sessionId}`);
+      }
+      
       console.log(ws);
       ws.addEventListener('open', () => {
         console.log('WebSocket connection opened');
