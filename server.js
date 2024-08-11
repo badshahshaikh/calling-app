@@ -7,7 +7,7 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 const url = require('url');
-
+const port = 5000;
 app.use(express.static('public'));
 
 wss.on('connection', (ws, req) => {
@@ -61,7 +61,7 @@ wss.on('connection', (ws, req) => {
   
 });
 
-server.listen(5000, () => {
+server.listen(process.env.PORT || port, () => {
   console.log('listening on *:5000 ');
 });
 
