@@ -1,6 +1,7 @@
-
+const fs = require('fs');
 const express = require('express');
 const http = require('http');
+const https = require('https');
 const WebSocket = require('ws');
 
 const app = express();
@@ -8,6 +9,12 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 const url = require('url');
 const port = 5000;
+
+const options = {
+  key: fs.readFileSync('../server.key'),
+  cert: fs.readFileSync('../server.cert')
+};
+
 app.use(express.static('public'));
 
 wss.on('connection', (ws, req) => {
@@ -61,8 +68,21 @@ wss.on('connection', (ws, req) => {
   
 });
 
-server.listen(process.env.PORT || port, () => {
-  console.log('listening on *:5000 ');
+// server.listen(process.env.PORT || port, () => {
+//   console.log('listening on *:5000 ');
+// });
+
+
+// HTTPS server
+https.createServer(options, app).listen(443, () => {
+  console.log('Server running on https://<your-ip-address>');
 });
+
+// Optional: Redirect HTTP to HTTPS
+const http = require('http');
+http.createServer((req, res) => {
+  res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+  res.end();
+}).listen(80);
 
 // exports.app = functions.https.onRequest(server);
