@@ -10,10 +10,10 @@ const wss = new WebSocket.Server({ server });
 const url = require('url');
 const port = 5000;
 
-const options = {
-  key: fs.readFileSync('../server.key'),
-  cert: fs.readFileSync('../server.cert')
-};
+// const options = {
+//   key: fs.readFileSync('../server.key'),
+//   cert: fs.readFileSync('../server.cert')
+// };
 
 app.use(express.static('public'));
 
