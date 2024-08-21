@@ -20,21 +20,22 @@ const port = 5000;
 app.use(express.static('public'));
 
 wss.on('connection', (ws, req) => {
+  
+          // const parameters = url.parse(req.url, true);
+          // const sessionId = parameters.query.sessionId;
 
-  const parameters = url.parse(req.url, true);
-  const sessionId = parameters.query.sessionId;
+          // if (!sessionId) {
+          //   ws.close(1008, 'session ID is required');
+          //   return;
+          // }
 
-  if (!sessionId) {
-    ws.close(1008, 'session ID is required');
-    return;
-  }
-
-  ws.sessionId = sessionId;
-  console.log(`User connected to session ${sessionId}`);
+          // ws.sessionId = sessionId;
+          // console.log(`User connected to session ${sessionId}`);
 
   // console.log('a user connected');
 
   ws.on('message', (message) => {
+    console.log(`Received message: ${message}`);
     // const parsedMessage = JSON.parse(message);
     // switch (parsedMessage.type) {
     //   case 'offer':
@@ -49,11 +50,11 @@ wss.on('connection', (ws, req) => {
     // }
 
     // const parsedMessage = JSON.parse(message);
-    wss.clients.forEach(client => {
-      if (client !== ws && client.readyState === WebSocket.OPEN && client.sessionId === sessionId) {
-        client.send(message);
-      }
-    });
+          // wss.clients.forEach(client => {
+          //   if (client !== ws && client.readyState === WebSocket.OPEN && client.sessionId === sessionId) {
+          //     client.send(message);
+          //   }
+          // });
 
     // clients.get(userID).forEach(client => {
     //   if (client !== ws && client.readyState === WebSocket.OPEN) {
@@ -82,7 +83,8 @@ wss.on('error', (error) => {
 
 
 // HTTPS server
-https.createServer(options, app).listen(443, () => {
+// https.createServer(options, app).listen(443, () => {
+server.listen(443, () => {
   console.log('Server running on https://<your-ip-address>');
 });
 
