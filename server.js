@@ -5,7 +5,7 @@ const https = require('https');
 const WebSocket = require('ws');
 
 const app = express();
-const server = http.createServer(app);
+const server = https.createServer(app);
 const wss = new WebSocket.Server({ server });
 const url = require('url');
 const port = 5000;
@@ -67,6 +67,12 @@ wss.on('connection', (ws, req) => {
   });
   
 });
+
+
+wss.on('error', (error) => {
+  console.error('Server error:', error);
+});
+
 
 // server.listen(process.env.PORT || port, () => {
 //   console.log('listening on *:5000 ');
