@@ -1,19 +1,21 @@
 const fs = require('fs');
 const express = require('express');
-const http = require('http');
+// const http = require('http');
 const https = require('https');
 const WebSocket = require('ws');
-
-const app = express();
-const server = https.createServer(app);
-const wss = new WebSocket.Server({ server });
-const url = require('url');
-const port = 5000;
 
 const options = {
   key: fs.readFileSync('../server.key'),
   cert: fs.readFileSync('../server.cert')
 };
+
+const app = express();
+const server = https.createServer(options,app);
+const wss = new WebSocket.Server({ server });
+const url = require('url');
+const port = 5000;
+
+
 
 app.use(express.static('public'));
 
