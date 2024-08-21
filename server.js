@@ -1,7 +1,7 @@
 const fs = require('fs');
 const express = require('express');
 const http = require('http');
-const https = require('https');
+// const https = require('https');
 const WebSocket = require('ws');
 
 const app = express();
@@ -74,9 +74,9 @@ wss.on('connection', (ws, req) => {
 
 
 // HTTPS server
-https.createServer(options, app).listen(443, () => {
-  console.log('Server running on https://<your-ip-address>');
-});
+// https.createServer(options, app).listen(443, () => {
+//   console.log('Server running on https://<your-ip-address>');
+// });
 
 // Optional: Redirect HTTP to HTTPS
 // const http = require('http');
