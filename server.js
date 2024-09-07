@@ -51,10 +51,9 @@ if (process.env.NODE_ENV === 'development') {
 }else{
 
   const app = express();
-  const options = {};
   let server = "";
   if (process.env.NODE_ENV === 'Production'){
-    options = {
+    const options = {
       key: fs.readFileSync('../server.key'),
       cert: fs.readFileSync('../server.cert')
     };
