@@ -7,7 +7,7 @@ import http from 'http';
 import https from 'https';
 import url from 'url';
 // import WebSocket from 'ws';
-import { WebSocketServer } from 'ws';
+import { WebSocketServer, WebSocket } from 'ws';
 // require('dotenv').config();
 
 // const fs = require('fs');
@@ -50,14 +50,22 @@ if (process.env.NODE_ENV === 'development') {
 
 }else{
 
-  
-  const options = {
-    key: fs.readFileSync('../server.key'),
-    cert: fs.readFileSync('../server.cert')
-  };
-
   const app = express();
-  const server = https.createServer(options,app);
+  const options = {};
+  let server = "";
+  if (process.env.NODE_ENV === 'Production'){
+    options = {
+      key: fs.readFileSync('../server.key'),
+      cert: fs.readFileSync('../server.cert')
+    };
+    server = https.createServer(options,app);
+  }else{
+    
+    server = http.createServer(app);
+  }
+
+
+  
   // const wss = new WebSocket.Server({ server });
   const wss = new WebSocketServer({ server })
   // const url = require('url');
@@ -98,6 +106,10 @@ if (process.env.NODE_ENV === 'development') {
 
       // const parsedMessage = JSON.parse(message);
             wss.clients.forEach(client => {
+              // console.log(client.readyState)
+              // console.log(WebSocketServer)
+              // console.log(WebSocketServer.OPEN)
+              // console.log(client.sessionId)
               if (client !== ws && client.readyState === WebSocket.OPEN && client.sessionId === sessionId) {
                 client.send(message);
               }
@@ -123,9 +135,21 @@ if (process.env.NODE_ENV === 'development') {
   console.error('Server error:', error);
   });
 
-  server.listen(443, () => {
-    console.log('Server running on https://<your-ip-address>');
-  });
+  if (process.env.NODE_ENV === 'Production'){
+
+    server.listen(443, () => {
+      console.log('Server running on https://<your-ip-address>');
+    });
+
+  }else{
+
+    server.listen(80, () => {
+      console.log('listening on *:80 ');
+    });
+
+
+  }
+
 
 
 

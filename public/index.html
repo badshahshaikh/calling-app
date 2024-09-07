@@ -1,20 +1,128 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>WebRTC Example</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calling App</title>
+  <link rel="stylesheet" href="/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    .right_float{
+      right: 0;
+    }
+    .icon-button {
+      display: inline-flex; /* Align with text */
+      align-items: center; /* Center vertically */
+      background-color: transparent; /* No background */
+      border: none; /* Remove default border */
+      cursor: pointer; /* Pointer cursor */
+      color: inherit; /* Inherit text color */
+      text-decoration: none; /* Remove underline */
+    }
+
+    .icon-button:hover {
+      color: #26a69a; /* Change color on hover */
+    }
+
+    .fixed-bottom {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000; /* Ensures it is above other content */
+    }
+    .custom-send{
+      padding: 10px;
+      color: white;
+      border-radius: 8px 8px 0px 8px;
+      margin: 10px 10px 10px 90px;
+    }
+
+    .custom-send2{
+      padding: 10px;
+      color: white;
+      border-radius: 8px 8px 8px 0px;
+      margin: 10px 90px 10px 10px;
+    }
+    .localvideostream{
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -2;
+    }
+    .home{
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      background: white;
+    }
+    .customer_three_dot_button_changes{
+      top: 23px;
+    }
+    #dropdown1 {
+      visibility: visible !important;
+      bottom: auto;
+    }
+
+  </style>
 </head>
 <body>
-  <h1>WebRTC Example</h1>
+  <h3 >Calling App</h3>
   <input id="sessionId" type="text" placeholder="Enter Session ID">
-  <button id="joinButton">Join Call</button>
-  <button id="callButton">Start Call</button>
-  <video id="localVideo" autoplay muted></video>
+  <button id="joinButton" class="btn blue">Join Call</button>
+  <button id="callButton" class="btn blue" >Start Call</button>
+  <div class="fixed-action-btn customer_three_dot_button_changes">
+    <a class="btn-floating btn-large blue dropdown-trigger" data-target="dropdown1" >
+      <i class="material-icons">more_vert</i>
+    </a>
+    <ul id="dropdown1"  class="dropdown-content">
+      <li><a href="#!">Add Friends</a></li>
+      <li><a href="#!">Option 2</a></li>
+      <li><a href="#!">Option 3</a></li>
+    </ul>
+  </div>
+
+
+  <video id="localVideo" class="localvideostream" autoplay muted></video>
+  
+  <div class="home">
+
+  </div>
   <video id="remoteVideo" autoplay></video>
 
-  <input id="messageInput" type="text" placeholder="Type a message..." />
-  <button onclick="sendMessage()">Send</button>
+  <!-- <input id="messageInput" type="text" placeholder="Type a message..." /> -->
+  <div class="row">
+    <form class="col s12">
+      <div class="row">
+        <div class="input-field col s12 fixed-bottom" style="background: white;margin: 0rem 0rem;">
+          <i class="material-icons prefix right_float icon-button" onclick="sendMessage()">send</i>
+          <textarea id="messageInput" class="materialize-textarea" style="margin: 0;" spellcheck="false"></textarea>
+          <label for="messageInput" style="margin: 0;">Message</label>
+        </div>
+      </div>
+    </form>
+  </div>
+  <!-- <button onclick="sendMessage()">Send</button> -->
   <ul id="messages"></ul>
   <!-- <button id="callButton">Start Call</button> -->
+  <script src="/js/materialize.min.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.dropdown-trigger');
+        M.Dropdown.init(elems, {
+          // Customize dropdown options if needed
+        });
+      });
+  </script>
+    
   <script>
     
     const localVideo = document.getElementById('localVideo');
@@ -76,6 +184,8 @@
           const messages1 = document.getElementById('messages');
           const message1 = document.createElement('li');
           message1.textContent = text;
+          message1.classList.add('blue');
+          message1.classList.add('custom-send2');          
           messages1.appendChild(message1);
 
           const parsedMessage = JSON.parse(text);
@@ -123,6 +233,8 @@
         const messages = document.getElementById('messages');
         const message = document.createElement('li');
         message.textContent = input.value;
+        message.classList.add('blue');
+        message.classList.add('custom-send');
         messages.appendChild(message);
         input.value = '';
     }
@@ -271,6 +383,7 @@
     // });
     
   </script>
-  
+
+
 </body>
 </html>
