@@ -58,7 +58,8 @@ if (process.env.NODE_ENV === 'development') {
 
   const app = express();
   const server = https.createServer(options,app);
-  const wss = new WebSocket.Server({ server });
+  // const wss = new WebSocket.Server({ server });
+  const wss = new WebSocketServer({ server })
   const url = require('url');
   const port = 5000;
 
