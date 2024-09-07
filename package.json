@@ -1,12 +1,19 @@
 {
+  "name": "my-project",
+  "version": "1.0.0",
+  "type": "module",
   "dependencies": {
     "body-parser": "^1.20.2",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "google-translate-api": "^2.3.0",
     "mongodb": "^6.8.0",
+    "translate": "^3.0.0",
+    "translate-google-api": "^1.0.4",
     "web-push": "^3.6.7",
     "ws": "^8.18.0"
   },
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "node server.js"
   }
 }

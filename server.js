@@ -1,80 +1,140 @@
-const fs = require('fs');
-const express = require('express');
+import translate from 'translate-google-api';
+
+import dotenv from 'dotenv';
+import fs from 'fs';
+import express from 'express';
+import http from 'http';
+import https from 'https';
+import url from 'url';
+// import WebSocket from 'ws';
+import { WebSocketServer } from 'ws';
+// require('dotenv').config();
+
+// const fs = require('fs');
+// const express = require('express');
 // const http = require('http');
-const https = require('https');
-const WebSocket = require('ws');
+// const https = require('https');
+// const WebSocket = require('ws');
+// // const translate = require('google-translate-api');
+// const translate = require('translate');
 
-const options = {
-  key: fs.readFileSync('../server.key'),
-  cert: fs.readFileSync('../server.cert')
-};
+dotenv.config();
 
-const app = express();
-const server = https.createServer(options,app);
-const wss = new WebSocket.Server({ server });
-const url = require('url');
-const port = 5000;
+console.log('checking',process.env.NODE_ENV);
 
+if (process.env.NODE_ENV === 'development') {
 
+    const app = express();
+    const server = http.createServer(app);
+    // const wss = new WebSocket.Server({ server });
+    const wss = new WebSocketServer({ server })
+    // const url = require('url');
+    const port = 5000;
 
-app.use(express.static('public'));
-
-wss.on('connection', (ws, req) => {
-  
-          const parameters = url.parse(req.url, true);
-          const sessionId = parameters.query.sessionId;
-
-          if (!sessionId) {
-            ws.close(1008, 'session ID is required');
-            return;
-          }
-
-          ws.sessionId = sessionId;
-          console.log(`User connected to session ${sessionId}`);
-
-  // console.log('a user connected');
-
-  ws.on('message', (message) => {
-    console.log(`Received message: ${message}`);
-    // const parsedMessage = JSON.parse(message);
-    // switch (parsedMessage.type) {
-    //   case 'offer':
-    //   case 'answer':
-    //   case 'candidate':
-    //     wss.clients.forEach(client => {
-    //       if (client !== ws && client.readyState === WebSocket.OPEN) {
-    //         client.send(message);
-    //       }
-    //     });
-    //     break;
-    // }
-
-    // const parsedMessage = JSON.parse(message);
-          wss.clients.forEach(client => {
-            if (client !== ws && client.readyState === WebSocket.OPEN && client.sessionId === sessionId) {
-              client.send(message);
-            }
-          });
-
-    // clients.get(userID).forEach(client => {
-    //   if (client !== ws && client.readyState === WebSocket.OPEN) {
-    //     client.send(message);
-    //   }
-    // });
     
-  });
+    const textToTranslate = 'what are you doing right now I am doing my work';
+    const targetLanguage = 'hi'; // Spanish
 
+    (async () => {
+      try {
+        const result = await translate(textToTranslate, { to: targetLanguage });
+        console.log(`Translated text: ${result}`);
+      } catch (err) {
+        console.error('Error during translation:', err);
+      }
+    })();
 
-  ws.on('close', (code, reason) => {
-      console.log('Connection closed:', code, reason);
-  });
+    server.listen(8080, 'localhost', () => {
+      console.log(`Server running`);
+    });
+
+}else{
+
   
-});
+  const options = {
+    key: fs.readFileSync('../server.key'),
+    cert: fs.readFileSync('../server.cert')
+  };
+
+  const app = express();
+  const server = https.createServer(options,app);
+  const wss = new WebSocket.Server({ server });
+  const url = require('url');
+  const port = 5000;
 
 
-wss.on('error', (error) => {
+  app.use(express.static('public'));
+
+  wss.on('connection', (ws, req) => {
+    
+    const parameters = url.parse(req.url, true);
+    const sessionId = parameters.query.sessionId;
+
+    if (!sessionId) {
+      ws.close(1008, 'session ID is required');
+      return;
+    }
+
+    ws.sessionId = sessionId;
+    console.log(`User connected to session ${sessionId}`);
+
+    // console.log('a user connected');
+
+    ws.on('message', (message) => {
+      console.log(`Received message: ${message}`);
+      // const parsedMessage = JSON.parse(message);
+      // switch (parsedMessage.type) {
+      //   case 'offer':
+      //   case 'answer':
+      //   case 'candidate':
+      //     wss.clients.forEach(client => {
+      //       if (client !== ws && client.readyState === WebSocket.OPEN) {
+      //         client.send(message);
+      //       }
+      //     });
+      //     break;
+      // }
+
+      // const parsedMessage = JSON.parse(message);
+            wss.clients.forEach(client => {
+              if (client !== ws && client.readyState === WebSocket.OPEN && client.sessionId === sessionId) {
+                client.send(message);
+              }
+            });
+
+      // clients.get(userID).forEach(client => {
+      //   if (client !== ws && client.readyState === WebSocket.OPEN) {
+      //     client.send(message);
+      //   }
+      // });
+      
+    });
+
+
+    ws.on('close', (code, reason) => {
+        console.log('Connection closed:', code, reason);
+    });
+
+  });
+
+
+  wss.on('error', (error) => {
   console.error('Server error:', error);
-});
+  });
+
+  server.listen(443, () => {
+    console.log('Server running on https://<your-ip-address>');
+  });
+
+
+
+
+}
+
+
+
+
+
 
 
 // server.listen(process.env.PORT || port, () => {
@@ -84,9 +144,11 @@ wss.on('error', (error) => {
 
 // HTTPS server
 // https.createServer(options, app).listen(443, () => {
-server.listen(443, () => {
-  console.log('Server running on https://<your-ip-address>');
-});
+      // server.listen(443, () => {
+      //   console.log('Server running on https://<your-ip-address>');
+      // });
+
+
 
 // Optional: Redirect HTTP to HTTPS
 // const http = require('http');
