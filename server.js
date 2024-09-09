@@ -6,6 +6,8 @@ import express from 'express';
 import http from 'http';
 import https from 'https';
 import url from 'url';
+import QRCode from 'qrcode';
+import crypto from 'crypto';
 // import WebSocket from 'ws';
 import { WebSocketServer, WebSocket } from 'ws';
 // require('dotenv').config();
@@ -26,16 +28,37 @@ if (process.env.NODE_ENV === 'development') {
 
     const app = express();
     const server = http.createServer(app);
-    // const wss = new WebSocket.Server({ server });
     const wss = new WebSocketServer({ server })
-    // const url = require('url');
     const port = 5000;
 
-    
-    const textToTranslate = 'what are you doing right now I am doing my work';
-    const targetLanguage = 'hi'; // Spanish
+    // for getting the clients IP address
+    app.get('/', (req, res) => {
+      const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+      console.log("Client IP address:", clientIp);
+      // hash the Ip address
+      const ipAddress = clientIp;
+      const hash = crypto.createHash('sha256').update(ipAddress).digest('hex');
+      console.log('Hashed IP address:', hash);
+      // res.send(`Client IP address: ${clientIp}`);
+      
+      // generate embaded qr code 
+      const data = hash;
+      QRCode.toDataURL(data)
+        .then((url) => {
+          res.send(`Client IP address: ${url}`);
+          // console.log('QR code Data URL:', url);
+        })
+        .catch((err) => {
+          console.error('Error generating QR code:', err);
+        });
 
+    });
+    
+
+    // translate 
     (async () => {
+      const textToTranslate = 'what are you doing right now I am doing my work';
+      const targetLanguage = 'hi'; 
       try {
         const result = await translate(textToTranslate, { to: targetLanguage });
         console.log(`Translated text: ${result}`);
@@ -43,6 +66,13 @@ if (process.env.NODE_ENV === 'development') {
         console.error('Error during translation:', err);
       }
     })();
+
+
+
+
+
+
+
 
     server.listen(8080, 'localhost', () => {
       console.log(`Server running`);

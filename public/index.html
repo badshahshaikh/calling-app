@@ -89,6 +89,7 @@
     </ul>
   </div>
 
+  <img src="" alt="">
 
   <video id="localVideo" class="localvideostream" autoplay muted></video>
   
@@ -96,6 +97,10 @@
 
   </div>
   <video id="remoteVideo" autoplay></video>
+
+  <video id="video" width="400" height="300" autoplay></video>
+  <canvas id="canvas" hidden></canvas>
+
 
   <!-- <input id="messageInput" type="text" placeholder="Type a message..." /> -->
   <div class="row">
@@ -113,6 +118,42 @@
   <ul id="messages"></ul>
   <!-- <button id="callButton">Start Call</button> -->
   <script src="/js/materialize.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+      .then(stream => {
+          video.srcObject = stream;
+      })
+      .catch(err => {
+          console.error("Error accessing camera: ", err);
+      });
+    
+    video.addEventListener('play', () => {
+          const scanQRCode = () => {
+              if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                  canvas.width = video.videoWidth;
+                  canvas.height = video.videoHeight;
+                  context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                  const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                  const qrCode = jsQR(imageData.data, imageData.width, imageData.height);
+                  
+                  if (qrCode) {
+                      console.log("QR Code detected: ", qrCode.data);
+                      alert(`QR Code detected: ${qrCode.data}`);
+                      // You can send this data to your Node.js backend
+                  }
+              }
+              requestAnimationFrame(scanQRCode);
+          };
+          scanQRCode();
+      });
+
+  </script>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
