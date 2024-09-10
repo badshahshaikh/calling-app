@@ -101,7 +101,8 @@
   <video id="video" width="400" height="300" autoplay></video>
   <canvas id="canvas" hidden></canvas>
 
-
+  <button id="fetchqr">Fetch QR</button>
+  <img id="qrtoscan" alt="Base64 Image" />
   <!-- <input id="messageInput" type="text" placeholder="Type a message..." /> -->
   <div class="row">
     <form class="col s12">
@@ -119,6 +120,33 @@
   <!-- <button id="callButton">Start Call</button> -->
   <script src="/js/materialize.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+
+  <script>
+
+    
+    document.getElementById('fetchqr').onclick = function() {
+      fetch('/getQR')  // URL of the API or resource
+        .then(response => response.json())  // Convert response to JSON
+        .then(data => {
+          console.log(data.url);  
+          document.getElementById('qrtoscan').src = data.url;
+          // alert(data);
+          // Do something with the data
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+        });
+    };
+      // fetch(`/getQR`)
+      //   .then(
+      //     response => response.json()
+      //   )
+      //   .then(
+      //     data => alert("QR Response from server: ", data)
+      //   )
+      //   .catch(error => console.error("Error sending QR code to server: ", error));
+
+  </script>
 
   <script>
     const video = document.getElementById('video');
@@ -145,6 +173,13 @@
                   if (qrCode) {
                       console.log("QR Code detected: ", qrCode.data);
                       alert(`QR Code detected: ${qrCode.data}`);
+                      fetch(`/getUser?data=${encodeURIComponent(qrCode.data)}`)
+                            .then(response => response.json())
+                            .then(
+                              data => alert("Response from server: ", data)
+                                  )
+                            .catch(error => console.error("Error sending QR code to server: ", error));
+
                       // You can send this data to your Node.js backend
                   }
               }

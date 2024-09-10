@@ -21,20 +21,25 @@ import { WebSocketServer, WebSocket } from 'ws';
 // const translate = require('translate');
 
 dotenv.config();
+const app = express();
 
-console.log('checking',process.env.NODE_ENV);
+// app.get('/',(req, res) => {
+//   res.json({check:`working`});
+// })
 
-if (process.env.NODE_ENV === 'development') {
+app.get('/getUser', (req, res) => {
+  const qrData = req.query.data;
+  console.log("Received QR code data: ", qrData);
+  res.json({ message: `QR code data received: ${qrData}` });
 
-    const app = express();
-    const server = http.createServer(app);
-    const wss = new WebSocketServer({ server })
-    const port = 5000;
+
+})
+
 
     // for getting the clients IP address
-    app.get('/', (req, res) => {
+    app.get('/getQR', (req, res) => {
       const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-      console.log("Client IP address:", clientIp);
+      // console.log("Client IP address:", clientIp);
       // hash the Ip address
       const ipAddress = clientIp;
       const hash = crypto.createHash('sha256').update(ipAddress).digest('hex');
@@ -45,7 +50,7 @@ if (process.env.NODE_ENV === 'development') {
       const data = hash;
       QRCode.toDataURL(data)
         .then((url) => {
-          res.send(`Client IP address: ${url}`);
+          res.send({url:`${url}`});
           // console.log('QR code Data URL:', url);
         })
         .catch((err) => {
@@ -53,6 +58,18 @@ if (process.env.NODE_ENV === 'development') {
         });
 
     });
+
+
+console.log('checking',process.env.NODE_ENV);
+
+if (process.env.NODE_ENV === 'development') {
+
+    // const app = express();
+    const server = http.createServer(app);
+    const wss = new WebSocketServer({ server })
+    const port = 5000;
+
+
     
 
     // translate 
@@ -74,13 +91,14 @@ if (process.env.NODE_ENV === 'development') {
 
 
 
+
     server.listen(8080, 'localhost', () => {
       console.log(`Server running`);
     });
 
 }else{
 
-  const app = express();
+
   let server = "";
   if (process.env.NODE_ENV === 'Production'){
     const options = {
