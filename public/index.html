@@ -69,6 +69,65 @@
     #dropdown1 {
       visibility: visible !important;
       bottom: auto;
+      width: 140px !important;
+      left: -80px !important;
+    }
+
+    #dropdown1 li a {
+      color: black;
+      font-weight: 600;
+    }
+
+    #scanQrCode{
+      height: 100vh;
+      width: 100vw;
+      z-index: 9998;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: #ffffff;
+      right: 0;
+      display: none;
+    }
+
+    .closecamerabutton{
+      z-index: 9999;
+      position: fixed;
+      top: 3rem;
+      right: 2rem;
+      display: none;
+    }
+    
+    
+    #qrtoscan{
+      position: fixed;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .qrtoscanOuter{
+      background: #ffffff;
+      width: 100vw;
+      height: 100vh;
+      z-index: 9998;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: none;
+    }
+
+    .qrtoscanOuter #qrtoscan{
+      width: 100vw;
+    }
+
+    .closeqrbutton{
+      z-index: 9999;
+      position: fixed;
+      top: 3rem;
+      right: 2rem;
+      display: none;
     }
 
   </style>
@@ -83,9 +142,9 @@
       <i class="material-icons">more_vert</i>
     </a>
     <ul id="dropdown1"  class="dropdown-content">
-      <li><a href="#!">Add Friends</a></li>
-      <li><a href="#!">Option 2</a></li>
-      <li><a href="#!">Option 3</a></li>
+      <li><a onclick='showcamera()'>Scan QR</a></li>
+      <li><a onclick='ShowQr()'>Show QR</a></li>
+      <li><a onclick='JoinRoom()'>Join Room</a></li>
     </ul>
   </div>
 
@@ -98,16 +157,27 @@
   </div>
   <video id="remoteVideo" autoplay></video>
 
-  <video id="video" width="400" height="300" autoplay></video>
+
+  <a onclick="closeCamera()" class="btn-floating red closecamerabutton">
+    <i class="material-icons">close</i>
+  </a>
+  <video id="scanQrCode" width="400" height="300" autoplay></video>
   <canvas id="canvas" hidden></canvas>
 
-  <button id="fetchqr">Fetch QR</button>
-  <img id="qrtoscan" alt="Base64 Image" />
+
+  <!-- <button id="fetchqr">Fetch QR</button> -->
+   <div class="qrtoscanOuter">
+    <a onclick="closeQr()" class="btn-floating red closeqrbutton">
+      <i class="material-icons">close</i>
+    </a>
+    <img id="qrtoscan"  />
+   </div>
+  
   <!-- <input id="messageInput" type="text" placeholder="Type a message..." /> -->
   <div class="row">
     <form class="col s12">
       <div class="row">
-        <div class="input-field col s12 fixed-bottom" style="background: white;margin: 0rem 0rem;">
+        <div class="input-field col s12 fixed-bottom" style="background: white;margin: 0.8rem 0rem;">
           <i class="material-icons prefix right_float icon-button" onclick="sendMessage()">send</i>
           <textarea id="messageInput" class="materialize-textarea" style="margin: 0;" spellcheck="false"></textarea>
           <label for="messageInput" style="margin: 0;">Message</label>
@@ -124,12 +194,15 @@
   <script>
 
     
-    document.getElementById('fetchqr').onclick = function() {
+    // document.getElementById('fetchqr').onclick = function() 
+    function ShowQr(){
       fetch('/getQR')  // URL of the API or resource
         .then(response => response.json())  // Convert response to JSON
         .then(data => {
-          console.log(data.url);  
+          console.log(data.url);
           document.getElementById('qrtoscan').src = data.url;
+          document.getElementsByClassName('qrtoscanOuter')[0].style.display = "block";
+          document.getElementsByClassName('closeqrbutton')[0].style.display = "block";
           // alert(data);
           // Do something with the data
         })
@@ -137,19 +210,38 @@
           console.error('Error fetching data:', error);
         });
     };
-      // fetch(`/getQR`)
-      //   .then(
-      //     response => response.json()
-      //   )
-      //   .then(
-      //     data => alert("QR Response from server: ", data)
-      //   )
-      //   .catch(error => console.error("Error sending QR code to server: ", error));
+
+    function closeQr(){
+
+      const qrtoscanOuter = document.getElementsByClassName('qrtoscanOuter')[0];
+      const closeqrbutton = document.getElementsByClassName('closeqrbutton')[0];
+      qrtoscanOuter.style.display = "none";
+      closeqrbutton.style.display = "none";
+
+    }
+
+    function showcamera(){
+
+      const scanQrCode = document.getElementById('scanQrCode');
+      const scanQrCodebtn = document.getElementsByClassName('closecamerabutton')[0];
+      scanQrCode.style.display = "block";
+      scanQrCodebtn.style.display = "block";
+      
+    }
+
+    function closeCamera(){
+
+      const scanQrCode = document.getElementById('scanQrCode');
+      const scanQrCodebtn = document.getElementsByClassName('closecamerabutton')[0];
+      scanQrCode.style.display = "none";
+      scanQrCodebtn.style.display = "none";
+
+    }
 
   </script>
 
   <script>
-    const video = document.getElementById('video');
+    const video = document.getElementById('scanQrCode');
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
 
