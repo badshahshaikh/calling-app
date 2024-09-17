@@ -101,10 +101,15 @@ if (process.env.NODE_ENV === 'development') {
 
   let server = "";
   if (process.env.NODE_ENV === 'Production'){
-    const options = {
-      key: fs.readFileSync('../server.key'),
-      cert: fs.readFileSync('../server.cert')
-    };
+    // const options = {
+    //   key: fs.readFileSync('../server.key'),
+    //   cert: fs.readFileSync('../server.cert')
+    // };
+    const server = createServer({
+      cert: readFileSync('/etc/letsencrypt/live/chatnow.co.in-0001/fullchain.pem'),
+      key: readFileSync('/etc/letsencrypt/live/chatnow.co.in-0001/privkey.pem')
+    }, app);
+
     server = https.createServer(options,app);
   }else{
     
@@ -185,7 +190,7 @@ if (process.env.NODE_ENV === 'development') {
   if (process.env.NODE_ENV === 'Production'){
 
     server.listen(443, () => {
-      console.log('Server running on https://<your-ip-address>');
+      console.log('Server running on https://3.124.177.12 or http://chatnow.co.in');
     });
 
   }else{
