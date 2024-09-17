@@ -102,12 +102,16 @@ if (process.env.NODE_ENV === 'development') {
   let server = "";
   if (process.env.NODE_ENV === 'Production'){
     const options = {
-      cert: readFileSync('/etc/letsencrypt/live/chatnow.co.in-0001/fullchain.pem'),
-      key: readFileSync('/etc/letsencrypt/live/chatnow.co.in-0001/privkey.pem')
+      key: fs.readFileSync('/etc/letsencrypt/live/chatnow.co.in-0001/privkey.pem'),
+      cert: fs.readFileSync('/etc/letsencrypt/live/chatnow.co.in-0001/fullchain.pem')
     };
-    // const server = createServer(, app);
+    // const server = createServer({
+    //   cert: readFileSync('/etc/letsencrypt/live/chatnow.co.in-0001/fullchain.pem'),
+    //   key: readFileSync('/etc/letsencrypt/live/chatnow.co.in-0001/privkey.pem')
+    // }, app);
 
     server = https.createServer(options,app);
+    
   }else{
     
     server = http.createServer(app);
