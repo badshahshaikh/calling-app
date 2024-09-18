@@ -270,9 +270,9 @@
           .then(devices => {
             const videoDevices = devices.filter(device => device.kind === 'videoinput');
             console.error('Available cameras for qr code:', videoDevices);
-            alert('Available cameras for qr code:', videoDevices);
+            alert('Available cameras for qr code:', videoDevices.length);
             if (videoDevices.length > 0) {
-              const cameraId = videoDevices[0].deviceId;
+              const cameraId = videoDevices[1].deviceId;
               navigator.mediaDevices.getUserMedia({
                 video: {
                   deviceId: cameraId
