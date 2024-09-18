@@ -52,6 +52,13 @@
       height: 100%;
       object-fit: cover;
       z-index: -2;
+
+      position: fixed;
+      top: 7rem;
+      left: 15rem;
+      width: 11rem;
+      object-fit: cover;
+      z-index: 999999;
     }
     .home{
       position: fixed;
@@ -347,10 +354,14 @@
               })
               .then(stream => {
                 // Display the camera stream in a video element
-                const videoElement = document.querySelector('video');
-                if (videoElement) {
-                  videoElement.srcObject = stream;
-                  videoElement.play();
+                // const videoElement = document.querySelector('video');
+                if (localVideo) {
+                  localVideo.srcObject = stream;
+                  localVideo.play();
+                  localStream = stream;
+                  ws.addEventListener('open', () => {
+                    console.log('WebSocket connection opened');
+                  });
                 }
               })
               .catch(err => {
