@@ -57,6 +57,7 @@
       top: 7rem;
       left: 15rem;
       width: 11rem;
+      height: auto;
       object-fit: cover;
       z-index: 999999;
     }
@@ -530,12 +531,13 @@
 
 
     document.getElementById('callButton').addEventListener('click', () => {
-      createPeerConnection();
+        createPeerConnection();
 
       peerConnection.createOffer()
         .then(offer => {
           peerConnection.setLocalDescription(offer);
           ws.send(JSON.stringify({ type: 'offer', offer }));
+          alert('offer send');
         })
         .catch(error => console.error('Error creating offer', error));
     });
