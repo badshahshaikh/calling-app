@@ -256,13 +256,51 @@
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
 
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-      .then(stream => {
-          video.srcObject = stream;
-      })
-      .catch(err => {
-          console.error("Error accessing camera: ", err);
-      });
+    // navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+    //   .then(stream => {
+    //       video.srcObject = stream;
+    //   })
+    //   .catch(err => {
+    //       console.error("Error accessing camera: ", err);
+    //   });
+    
+    if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+        // Get all media devices (including cameras)
+        navigator.mediaDevices.enumerateDevices()
+          .then(devices => {
+            const videoDevices = devices.filter(device => device.kind === 'videoinput');
+            console.error('Available cameras for qr code:', videoDevices);
+            alert('Available cameras for qr code:', videoDevices);
+            if (videoDevices.length > 0) {
+              const cameraId = videoDevices[0].deviceId;
+              navigator.mediaDevices.getUserMedia({
+                video: {
+                  deviceId: cameraId
+                }
+              })
+              .then(stream => {
+                if (video) {
+                  video.srcObject = stream;
+                  localStream = stream;
+                }
+              })
+              .catch(err => {
+                console.error('Error accessing the camera:', err);
+                alert('Error accessing the QR camera:', err);
+              });
+            } else {
+              console.error('No cameras found.');
+              alert('No cameras found.');
+            }
+          })
+          .catch(err => {
+            console.error('Error enumerating devices:', err);
+            alert('Error enumerating devices:', err);
+          });
+      } else {
+        console.error('MediaDevices API not supported in this browser.');
+        alert('MediaDevices API not supported in this browser.');
+      }
     
     video.addEventListener('play', () => {
           const scanQRCode = () => {
@@ -358,11 +396,11 @@
                 // const videoElement = document.querySelector('video');
                 if (localVideo) {
                   localVideo.srcObject = stream;
-                  localVideo.play();
+                  // localVideo.play();
                   localStream = stream;
-                  ws.addEventListener('open', () => {
-                    console.log('WebSocket connection opened');
-                  });
+                  // ws.addEventListener('open', () => {
+                  //   console.log('WebSocket connection opened');
+                  // });
                 }
               })
               .catch(err => {
