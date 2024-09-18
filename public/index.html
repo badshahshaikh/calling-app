@@ -312,17 +312,65 @@
       ]
     };
 
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-      .then(stream => {
-        localVideo.srcObject = stream;
-        localStream = stream;
+    // navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+    //   .then(stream => {
+    //     localVideo.srcObject = stream;
+    //     localStream = stream;
 
-        // ws.addEventListener('open', () => {
-        //   console.log('WebSocket connection opened');
-        // });
-      })
-      .catch(error => console.error('Error accessing media devices.', error));
+    //     // ws.addEventListener('open', () => {
+    //     //   console.log('WebSocket connection opened');
+    //     // });
+    //   })
+    //   .catch(error => console.error('Error accessing media devices.', error));
 
+      // Check if the MediaDevices API is supported
+      if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+        // Get all media devices (including cameras)
+        navigator.mediaDevices.enumerateDevices()
+          .then(devices => {
+            // Filter out video input devices (cameras)
+            const videoDevices = devices.filter(device => device.kind === 'videoinput');
+            
+            // Log available cameras
+            console.error('Available cameras:', videoDevices);
+            alert('Available cameras:', videoDevices);
+
+            // Select a camera (e.g., the first one)
+            if (videoDevices.length > 0) {
+              const cameraId = videoDevices[0].deviceId;
+
+              // Access the selected camera
+              navigator.mediaDevices.getUserMedia({
+                video: {
+                  deviceId: cameraId
+                }
+              })
+              .then(stream => {
+                // Display the camera stream in a video element
+                const videoElement = document.querySelector('video');
+                if (videoElement) {
+                  videoElement.srcObject = stream;
+                  videoElement.play();
+                }
+              })
+              .catch(err => {
+                // console.error('Error accessing the camera:', err);
+                console.error('Error accessing the camera:', err);
+                alert('Error accessing the camera:', err);
+              });
+            } else {
+              console.error('No cameras found.');
+              alert('No cameras found.');
+            }
+          })
+          .catch(err => {
+            console.error('Error enumerating devices:', err);
+            alert('Error enumerating devices:', err);
+          });
+      } else {
+        console.error('MediaDevices API not supported in this browser.');
+        alert('MediaDevices API not supported in this browser.');
+      }
 
     document.getElementById('joinButton').addEventListener('click', () => {
       const sessionId = document.getElementById('sessionId').value;
