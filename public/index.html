@@ -198,6 +198,7 @@
   </div>
   <!-- <button onclick="sendMessage()">Send</button> -->
   <ul id="messages"></ul>
+  <div id="error"></div>
   <!-- <button id="callButton">Start Call</button> -->
   <script src="/js/materialize.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
@@ -270,9 +271,13 @@
           .then(devices => {
             const videoDevices = devices.filter(device => device.kind === 'videoinput');
             console.error('Available cameras for qr code:', videoDevices);
-            alert('Available cameras for qr code:', videoDevices.length);
+            console.error('Available cameras for qr code:', videoDevices.length);
+            const objectString = JSON.stringify(videoDevices, null, 2);
+            document.getElementById('error').innerText = objectString
+
+
             if (videoDevices.length > 0) {
-              const cameraId = videoDevices[1].deviceId;
+              const cameraId = videoDevices[0].deviceId;
               navigator.mediaDevices.getUserMedia({
                 video: {
                   deviceId: cameraId
