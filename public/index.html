@@ -264,40 +264,41 @@
     //   .catch(err => {
     //       console.error("Error accessing camera: ", err);
     //   });
+
+    function setCamera(cameraId){
+        navigator.mediaDevices.getUserMedia({
+          video: {
+            deviceId: cameraId
+          }
+        })
+        .then(stream => {
+          if (video) {
+            video.srcObject = stream;
+            const objectString1 = JSON.stringify(stream, null, 2);
+            document.getElementById('error').innerText += objectString1
+          }
+        })
+        .catch(err => {
+          console.error('Error accessing the camera:', err);
+          alert('Error accessing the QR camera:', err);
+        });
+    }
     
     if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
         // Get all media devices (including cameras)
         navigator.mediaDevices.enumerateDevices()
           .then(devices => {
-            const videoDevices = devices.filter(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back') );
-            // console.error('Available cameras for qr code:', videoDevices);
-            // console.error('Available cameras for qr code:', videoDevices.length);
+            const backcamera = devices.filter(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back') );
+            const frontcamera = devices.filter(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('front') );
             const objectString = JSON.stringify(videoDevices, null, 2);
             document.getElementById('error').innerText += objectString
 
 
             if (videoDevices.length > 0) {
-              const cameraId = videoDevices[0].deviceId;
-              navigator.mediaDevices.getUserMedia({
-                video: {
-                  deviceId: cameraId
-                }
-                // video: {
-                //   facingMode: { exact: "environment" } // Request the back camera
-                // }
-              })
-              .then(stream => {
-                if (video) {
-                  video.srcObject = stream;
-                  // localStream = stream;
-                  const objectString1 = JSON.stringify(stream, null, 2);
-                  document.getElementById('error').innerText += objectString1
-                }
-              })
-              .catch(err => {
-                console.error('Error accessing the camera:', err);
-                alert('Error accessing the QR camera:', err);
-              });
+              const backCam = backcamera[0].deviceId;
+              const frontCam = frontcamera[0].deviceId;
+              setCamera(frontCam);
+              
             } else {
               console.error('No cameras found.');
               alert('No cameras found.');
