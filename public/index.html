@@ -253,65 +253,67 @@
   </script>
 
   <script>
-    const scanQrCode_camera = document.getElementById('scanQrCode');
+    const video = document.getElementById('scanQrCode');
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
 
-    // navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-    //   .then(stream => {
-    //       video.srcObject = stream;
-    //   })
-    //   .catch(err => {
-    //       console.error("Error accessing camera: ", err);
-    //   });
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+      .then(stream => {
+          video.srcObject = stream;
+      })
+      .catch(err => {
+          console.error("Error accessing camera: ", err);
+      });
     
-    if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-        // Get all media devices (including cameras)
-        navigator.mediaDevices.enumerateDevices()
-          .then(devices => {
-            const videoDevices = devices.filter(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back') );
-            // console.error('Available cameras for qr code:', videoDevices);
-            // console.error('Available cameras for qr code:', videoDevices.length);
-            const objectString = JSON.stringify(videoDevices, null, 2);
-            document.getElementById('error').innerText += objectString
+    // if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+    //     // Get all media devices (including cameras)
+    //     navigator.mediaDevices.enumerateDevices()
+    //       .then(devices => {
+    //         const videoDevices = devices.filter(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back') );
+    //         // console.error('Available cameras for qr code:', videoDevices);
+    //         // console.error('Available cameras for qr code:', videoDevices.length);
+    //         const objectString = JSON.stringify(videoDevices, null, 2);
+    //         document.getElementById('error').innerText += objectString
 
 
-            if (videoDevices.length > 0) {
-              const cameraId = videoDevices[0].deviceId;
-              navigator.mediaDevices.getUserMedia({
-                // video: {
-                //   deviceId: cameraId
-                // }
-                video: {
-                  facingMode: { exact: "environment" } // Request the back camera
-                }
-              })
-              .then(stream => {
-                if (video) {
-                  scanQrCode_camera.srcObject = stream;
-                  localStream = stream;
-                  const objectString1 = JSON.stringify(stream, null, 2);
-                  document.getElementById('error').innerText += objectString1
-                }
-              })
-              .catch(err => {
-                console.error('Error accessing the camera:', err);
-                alert('Error accessing the QR camera:', err);
-              });
-            } else {
-              console.error('No cameras found.');
-              alert('No cameras found.');
-            }
-          })
-          .catch(err => {
-            console.error('Error enumerating devices:', err);
-            alert('Error enumerating devices:', err);
-          });
-      } else {
-        console.error('MediaDevices API not supported in this browser.');
-        alert('MediaDevices API not supported in this browser.');
-      }
+    //         if (videoDevices.length > 0) {
+    //           const cameraId = videoDevices[0].deviceId;
+    //           navigator.mediaDevices.getUserMedia({
+    //             // video: {
+    //             //   deviceId: cameraId
+    //             // }
+    //             video: {
+    //               facingMode: { exact: "environment" } // Request the back camera
+    //             }
+    //           })
+    //           .then(stream => {
+    //             if (video) {
+    //               scanQrCode_camera.srcObject = stream;
+    //               localStream = stream;
+    //               const objectString1 = JSON.stringify(stream, null, 2);
+    //               document.getElementById('error').innerText += objectString1
+    //             }
+    //           })
+    //           .catch(err => {
+    //             console.error('Error accessing the camera:', err);
+    //             alert('Error accessing the QR camera:', err);
+    //           });
+    //         } else {
+    //           console.error('No cameras found.');
+    //           alert('No cameras found.');
+    //         }
+    //       })
+    //       .catch(err => {
+    //         console.error('Error enumerating devices:', err);
+    //         alert('Error enumerating devices:', err);
+    //       });
+    //   } else {
+      //   console.error('MediaDevices API not supported in this browser.');
+      //   alert('MediaDevices API not supported in this browser.');
+      // }
     
+    
+
     video.addEventListener('play', () => {
           const scanQRCode = () => {
               if (video.readyState === video.HAVE_ENOUGH_DATA) {
