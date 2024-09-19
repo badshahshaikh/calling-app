@@ -253,7 +253,7 @@
   </script>
 
   <script>
-    const scanQrCode = document.getElementById('scanQrCode');
+    const scanQrCode_camera = document.getElementById('scanQrCode');
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
 
@@ -270,8 +270,8 @@
         navigator.mediaDevices.enumerateDevices()
           .then(devices => {
             const videoDevices = devices.filter(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back') );
-            console.error('Available cameras for qr code:', videoDevices);
-            console.error('Available cameras for qr code:', videoDevices.length);
+            // console.error('Available cameras for qr code:', videoDevices);
+            // console.error('Available cameras for qr code:', videoDevices.length);
             const objectString = JSON.stringify(videoDevices, null, 2);
             document.getElementById('error').innerText += objectString
 
@@ -288,7 +288,7 @@
               })
               .then(stream => {
                 if (video) {
-                  scanQrCode.srcObject = stream;
+                  scanQrCode_camera.srcObject = stream;
                   localStream = stream;
                   const objectString1 = JSON.stringify(stream, null, 2);
                   document.getElementById('error').innerText += objectString1
