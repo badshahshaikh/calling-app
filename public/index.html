@@ -273,7 +273,7 @@
             console.error('Available cameras for qr code:', videoDevices);
             console.error('Available cameras for qr code:', videoDevices.length);
             const objectString = JSON.stringify(videoDevices, null, 2);
-            document.getElementById('error').innerText = objectString
+            document.getElementById('error').innerText += objectString
 
 
             if (videoDevices.length > 0) {
@@ -287,6 +287,8 @@
                 if (video) {
                   video.srcObject = stream;
                   localStream = stream;
+                  const objectString1 = JSON.stringify(video, null, 2);
+                  document.getElementById('error').innerText += objectString1
                 }
               })
               .catch(err => {
