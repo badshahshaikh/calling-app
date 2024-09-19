@@ -279,8 +279,11 @@
             if (videoDevices.length > 0) {
               const cameraId = videoDevices[0].deviceId;
               navigator.mediaDevices.getUserMedia({
+                // video: {
+                //   deviceId: cameraId
+                // }
                 video: {
-                  deviceId: cameraId
+                  facingMode: { exact: "environment" } // Request the back camera
                 }
               })
               .then(stream => {
