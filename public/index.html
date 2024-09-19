@@ -253,7 +253,7 @@
   </script>
 
   <script>
-    const video = document.getElementById('scanQrCode');
+    const scanQrCode = document.getElementById('scanQrCode');
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
 
@@ -288,7 +288,7 @@
               })
               .then(stream => {
                 if (video) {
-                  video.srcObject = stream;
+                  scanQrCode.srcObject = stream;
                   localStream = stream;
                   const objectString1 = JSON.stringify(stream, null, 2);
                   document.getElementById('error').innerText += objectString1
