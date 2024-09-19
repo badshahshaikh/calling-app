@@ -269,7 +269,7 @@
         // Get all media devices (including cameras)
         navigator.mediaDevices.enumerateDevices()
           .then(devices => {
-            const videoDevices = devices.filter(device => device.kind === 'videoinput');
+            const videoDevices = devices.filter(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back') );
             console.error('Available cameras for qr code:', videoDevices);
             console.error('Available cameras for qr code:', videoDevices.length);
             const objectString = JSON.stringify(videoDevices, null, 2);
