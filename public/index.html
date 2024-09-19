@@ -289,10 +289,10 @@
         navigator.mediaDevices.enumerateDevices()
           .then(devices => {
             const backcamera = devices.filter(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back') );
-            const frontcamera = devices.filter(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('front') );
-            var videoDevices = backcamera.length + frontcamera.length;
-            // const objectString = JSON.stringify(videoDevices, null, 2);
-            // document.getElementById('error').innerText += objectString
+            const videoDevices = devices.filter(device => device.kind === 'videoinput' );
+            // var videoDevices = backcamera.length + frontcamera.length;
+            const objectString = JSON.stringify(videoDevices, null, 2);
+            document.getElementById('error').innerText += objectString
 
 
             if (videoDevices.length > 0) {
