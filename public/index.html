@@ -288,8 +288,8 @@
               })
               .then(stream => {
                 if (video) {
-                  scanQrCode_camera.srcObject = stream;
-                  localStream = stream;
+                  video.srcObject = stream;
+                  // localStream = stream;
                   const objectString1 = JSON.stringify(stream, null, 2);
                   document.getElementById('error').innerText += objectString1
                 }
