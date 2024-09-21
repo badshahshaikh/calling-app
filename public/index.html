@@ -299,7 +299,11 @@
             if (videoDevices.length > 0) {
               const backCam = backcamera[0].deviceId;
               const frontCam = frontcamera[0].deviceId;
-              setCamera(frontCam);
+              console.log(backCam,frontCam);
+              if ( backCam !== undefined ){
+                setCamera(backCam);
+              }
+              
               
             } else {
               console.error('No cameras found.');
