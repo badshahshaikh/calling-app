@@ -290,6 +290,7 @@
           .then(devices => {
             const backcamera = devices.filter(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back') );
             const frontcamera = devices.filter(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('front') );
+            const othercam = devices.filter(device => device.kind === 'videoinput' );
             const videoDevices = devices.filter(device => device.kind === 'videoinput' );
             // var videoDevices = backcamera.length + frontcamera.length;
             const objectString = JSON.stringify(videoDevices, null, 2);
@@ -297,13 +298,16 @@
 
 
             if (videoDevices.length > 0) {
-              const backCam = backcamera[0].deviceId;
-              const frontCam = frontcamera[0].deviceId;
-              console.log(backCam,frontCam);
-              if ( backCam !== undefined ){
-                setCamera(backCam);
+              // const backCam = backcamera[0].deviceId;
+              // const frontCam = frontcamera[0].deviceId;
+              // console.log(backcamera);
+              if ( backcamera.length != 0 ){
+                console.log(backcamera[0].deviceId,frontcamera[0].deviceId);
+                setCamera(backcamera[0].deviceId);
+              }else{
+                console.log(othercam);
+                setCamera(othercam[0].deviceId);
               }
-              
               
             } else {
               console.error('No cameras found.');
