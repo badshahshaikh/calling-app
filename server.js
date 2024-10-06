@@ -30,6 +30,7 @@ const app = express();
 app.get('/getUser', (req, res) => {
   const qrData = req.query.data;
   console.log("Received QR code data: ", qrData);
+  // chatnow.co.in/c95233fff58d00b3a6a76d55ba5412322f7d7571dbe85a098990a52c2740f7f6
   res.json({ message: `QR code data received: ${qrData}` });
 
 
@@ -47,10 +48,10 @@ app.get('/getUser', (req, res) => {
       // res.send(`Client IP address: ${clientIp}`);
       
       // generate embaded qr code 
-      const data = hash;
+      const data = "chatnow.co.in/"+hash;
       QRCode.toDataURL(data)
         .then((url) => {
-          res.send({url:`${url}`});
+          res.send({url:`${url}`,sessionlink:`${data}`});
           // console.log('QR code Data URL:', url);
         })
         .catch((err) => {

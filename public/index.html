@@ -141,13 +141,17 @@
       display: none;
     }
 
+    .custom-bold {
+      font-weight: bold;
+    }
+
   </style>
 </head>
 <body>
   <!-- <h3 >Calling App</h3> -->
   <input id="sessionId" type="text" placeholder="Enter Session ID">
   <button id="joinButton" class="btn blue">Join Call</button>
-  <button id="callButton" class="btn blue" >Start Call</button>
+  <button id="callButton" class="btn grey lighten-2 black-text custom-bold" >Start Call</button>
   <div class="fixed-action-btn customer_three_dot_button_changes">
     <a class="btn-floating btn-large blue dropdown-trigger" data-target="dropdown1" >
       <i class="material-icons">more_vert</i>
@@ -212,6 +216,7 @@
         .then(response => response.json())  // Convert response to JSON
         .then(data => {
           console.log(data.url);
+          console.log(data.sessionlink);
           document.getElementById('qrtoscan').src = data.url;
           document.getElementsByClassName('qrtoscanOuter')[0].style.display = "block";
           document.getElementsByClassName('closeqrbutton')[0].style.display = "block";
@@ -285,22 +290,19 @@
     }
     
     if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-        // Get all media devices (including cameras)
-        navigator.mediaDevices.enumerateDevices()
+
+      navigator.mediaDevices.enumerateDevices()
           .then(devices => {
             const backcamera = devices.filter(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back') );
             const frontcamera = devices.filter(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('front') );
             const othercam = devices.filter(device => device.kind === 'videoinput' );
             const videoDevices = devices.filter(device => device.kind === 'videoinput' );
-            // var videoDevices = backcamera.length + frontcamera.length;
+
             const objectString = JSON.stringify(videoDevices, null, 2);
-            document.getElementById('error').innerText += objectString
 
 
             if (videoDevices.length > 0) {
-              // const backCam = backcamera[0].deviceId;
-              // const frontCam = frontcamera[0].deviceId;
-              // console.log(backcamera);
+
               if ( backcamera.length != 0 ){
                 console.log(backcamera[0].deviceId,frontcamera[0].deviceId);
                 setCamera(backcamera[0].deviceId);
@@ -335,12 +337,14 @@
                   const qrCode = jsQR(imageData.data, imageData.width, imageData.height);
                   
                   if (qrCode) {
+                      createSession(qrCode.data);
                       console.log("QR Code detected: ", qrCode.data);
                       alert(`QR Code detected: ${qrCode.data}`);
                       fetch(`/getUser?data=${encodeURIComponent(qrCode.data)}`)
                             .then(response => response.json())
                             .then(
-                              data => alert("Response from server: ", data)
+                              // data => alert("Response from server: ", data)
+                              
                                   )
                             .catch(error => console.error("Error sending QR code to server: ", error));
 
@@ -448,9 +452,22 @@
       // ------------------ video call front camera start ----------------------------
 
     document.getElementById('joinButton').addEventListener('click', () => {
-      const sessionId = document.getElementById('sessionId').value;
+      
+      createSession();
+
+
+    });
+
+    function createSession(session_hash=null) {
+      let sessionId = ""
+      if ( session_hash != null ){
+        sessionId = session_hash;
+      }else{
+        sessionId = document.getElementById('sessionId').value;
+      }
+       
       console.log(window.location.hostname);
-      // let websocketUrl = 
+
       if ( window.location.protocol == "https:" ){
         ws = new WebSocket(`wss://${window.location.hostname}:${window.location.port}?sessionId=${sessionId}`);
       }else{
@@ -468,13 +485,6 @@
 
         message.data.text().then(text => {
 
-          // try {
-          //     const parsedData = JSON.parse(jsonString);
-          //     console.log(parsedData); // Handle your parsed data here
-          // } catch (error) {
-          //     console.error('Error parsing JSON:', error);
-          // }
-
           const messages1 = document.getElementById('messages');
           const message1 = document.createElement('li');
           message1.textContent = text;
@@ -487,24 +497,6 @@
 
         });
 
-        // if (message.data instanceof Blob) {
-
-        //   blobToJson(message.data)
-        //       .then(json => {
-        //           console.log('JSON:', json);
-        //       })
-        //       .catch(error => {
-        //           console.error('Error converting Blob to JSON:', error);
-        //       });
-
-
-        // } else {
-        //     console.log('Message from server:', message.data);
-        //     message.textContent = reader.result;
-        //     messages.appendChild(message);
-        // }
-
-
       });
 
       ws.addEventListener('close', (event) => {
@@ -516,10 +508,7 @@
       ws.addEventListener('error', (error) => {
         console.error('WebSocket error', error);
       });
-
-
-
-    });
+    }
 
     function sendMessage() {
         const input = document.getElementById('messageInput');
