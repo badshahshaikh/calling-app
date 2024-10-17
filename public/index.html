@@ -6,6 +6,7 @@
   <title>Calling App</title>
   <link rel="stylesheet" href="/css/materialize.min.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
   <style>
     .right_float{
       right: 0;
@@ -29,7 +30,7 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      z-index: 1000; /* Ensures it is above other content */
+      z-index: 1; /* Ensures it is above other content */
     }
     .custom-send{
       padding: 10px;
@@ -45,21 +46,17 @@
       margin: 10px 90px 10px 10px;
     }
     .localvideostream{
+      z-index: -1;
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: -2;
-
-      position: fixed;
-      top: 7rem;
-      left: 15rem;
-      width: 11rem;
+      bottom: 6rem;
+      top: auto;
+      left: auto;
+      right: 3rem;
+      width: 13rem;
       height: auto;
+      border-radius: 4px;
       object-fit: cover;
-      /* z-index: 999999; */
+      /* /* z-index: 999999; * */
     }
     .home{
       position: fixed;
@@ -73,6 +70,7 @@
     }
     .customer_three_dot_button_changes{
       top: 23px;
+      height: min-content;
     }
     #dropdown1 {
       visibility: visible !important;
@@ -99,6 +97,7 @@
       top: 7rem;
       height: 21vh;
       width: 54vw;
+      display: none;
     }
 
     .closecamerabutton{
@@ -144,22 +143,54 @@
     .custom-bold {
       font-weight: bold;
     }
-
+    #outer-join-room{
+      width: 100vw;
+      z-index: 2;
+      position: fixed;
+      height: 100vh;
+      background: #3f9de7;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: center;
+    }
+    #sessionId{
+      width: 75%;
+    }
+    #joinButton{
+      margin-left: 10px;
+    }
+    #remoteVideo{
+      z-index: -1;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #8d8d8d;
+    }
   </style>
 </head>
 <body>
   <!-- <h3 >Calling App</h3> -->
-  <input id="sessionId" type="text" placeholder="Enter Session ID">
-  <button id="joinButton" class="btn blue">Join Call</button>
-  <button id="callButton" class="btn grey lighten-2 black-text custom-bold" >Start Call</button>
+
+  <div id="outer-join-room" >
+    <input id="sessionId"  type="text" placeholder="Enter Session ID">
+    <div><button id="CancelStringJoin" onclick="controller.cancelJoinRoomWithSession()" class="btn red ml2">Cancel</button><button id="joinButton" onclick="controller.joinRoomWithSession()" class="btn blue">Join</button></div>
+  </div>
+  <button id="callButton" class="btn grey lighten-2 black-text custom-bold" >Start Call</button> 
+
   <div class="fixed-action-btn customer_three_dot_button_changes">
     <a class="btn-floating btn-large blue dropdown-trigger" data-target="dropdown1" >
       <i class="material-icons">more_vert</i>
     </a>
     <ul id="dropdown1"  class="dropdown-content">
-      <li><a onclick='showcamera()'>Scan QR</a></li>
-      <li><a onclick='ShowQr()'>Show QR</a></li>
-      <li><a onclick='JoinRoom()'>Join Room</a></li>
+      <li><a onclick="controller.showcamera()">Scan QR</a></li>
+      <li><a onclick='controller.ShowQr()'>Show QR</a></li>
+      <li><a onclick='controller.JoinRoom()'>Join Room</a></li>
     </ul>
   </div>
 
@@ -170,10 +201,14 @@
   <div class="home">
 
   </div>
-  <video id="remoteVideo" autoplay></video>
+  <div id="remoteVideo-outer" >
+    <video id="remoteVideo" autoplay></video>
+    <button style="position: fixed;z-index: 4;" onclick="disconnectCall()" >Cut the call</button>
+  </div>
+  
 
 
-  <a onclick="closeCamera()" class="btn-floating red closecamerabutton">
+  <a onclick="controller.closeCamera()" class="btn-floating red closecamerabutton">
     <i class="material-icons">close</i>
   </a>
   <video id="scanQrCode" width="400" height="300" autoplay></video>
@@ -182,7 +217,7 @@
 
   <!-- <button id="fetchqr">Fetch QR</button> -->
    <div class="qrtoscanOuter">
-    <a onclick="closeQr()" class="btn-floating red closeqrbutton">
+    <a onclick="controller.closeQr()" class="btn-floating red closeqrbutton">
       <i class="material-icons">close</i>
     </a>
     <img id="qrtoscan"  />
@@ -193,7 +228,7 @@
     <form class="col s12">
       <div class="row">
         <div class="input-field col s12 fixed-bottom" style="background: white;margin: 0.8rem 0rem;">
-          <i class="material-icons prefix right_float icon-button" onclick="sendMessage()">send</i>
+          <i class="material-icons prefix right_float icon-button" onclick="controller.sendMessage()">send</i>
           <textarea id="messageInput" class="materialize-textarea" style="margin: 0;" spellcheck="false"></textarea>
           <label for="messageInput" style="margin: 0;">Message</label>
         </div>
@@ -209,76 +244,11 @@
 
   <script>
 
-  function getLink(){
-    return new Promise((resolve, reject) => {
-
-      fetch('/getQR')  // URL of the API or resource
-      .then(response => response.json())  // Convert response to JSON
-      .then(data => {
-        console.log(data.url);
-        
-        console.log(data.sessionlink);
-        resolve(data);
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-        reject(error);
-      });
-
-    })
-
-  }
+  
 
     
     // document.getElementById('fetchqr').onclick = function() 
-    function ShowQr(){
-      let userResponse = confirm("Do you want to proceed?");
-      if (userResponse) {
-        console.log("connect self.");
-        console.log("show qr.");
-        getLink().then(data => {
-          console.log(data);
-          createSession(data.sessionlink);
-          document.getElementById('qrtoscan').src = data.url;
-          document.getElementsByClassName('qrtoscanOuter')[0].style.display = "block";
-          document.getElementsByClassName('closeqrbutton')[0].style.display = "block";
-        }).catch(error => {
-          console.log("error in get qr",error);
-        })
-        
-      } else {
-        console.log("cancel.");
-      }
-
-
-    };
-
-    function closeQr(){
-
-      const qrtoscanOuter = document.getElementsByClassName('qrtoscanOuter')[0];
-      const closeqrbutton = document.getElementsByClassName('closeqrbutton')[0];
-      qrtoscanOuter.style.display = "none";
-      closeqrbutton.style.display = "none";
-
-    }
-
-    function showcamera(){
-
-      const scanQrCode = document.getElementById('scanQrCode');
-      const scanQrCodebtn = document.getElementsByClassName('closecamerabutton')[0];
-      scanQrCode.style.display = "block";
-      scanQrCodebtn.style.display = "block";
-      
-    }
-
-    function closeCamera(){
-
-      const scanQrCode = document.getElementById('scanQrCode');
-      const scanQrCodebtn = document.getElementsByClassName('closecamerabutton')[0];
-      scanQrCode.style.display = "none";
-      scanQrCodebtn.style.display = "none";
-
-    }
+    
 
   </script>
 
@@ -287,13 +257,9 @@
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
 
-    // navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-    //   .then(stream => {
-    //       video.srcObject = stream;
-    //   })
-    //   .catch(err => {
-    //       console.error("Error accessing camera: ", err);
-    //   });
+    const localVideo = document.getElementById('localVideo');
+    let localStream;
+    
 
     function setCamera(cameraId){
         navigator.mediaDevices.getUserMedia({
@@ -314,6 +280,33 @@
         });
     }
     
+    // now I will have to set the front camera of both device. and set the localVideo and localStream.
+
+    // function setLocalCameraForCall(){
+    //   return new Promise ( (res,rej) => {
+
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then(stream => {
+          // return stream;
+          localVideo.srcObject = stream;
+          localStream = stream;
+          // res();
+          // ws.addEventListener('open', () => {
+          //   console.log('WebSocket connection opened');
+          // });
+        })
+        .catch(error =>{
+        
+          console.error('Error accessing media devices.', error)
+          // rej();
+        });
+
+    //   } )
+      
+    // }
+
+
+
     if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
 
       navigator.mediaDevices.enumerateDevices()
@@ -327,6 +320,8 @@
 
 
             if (videoDevices.length > 0) {
+
+
 
               if ( backcamera.length != 0 ){
                 console.log(backcamera[0].deviceId,frontcamera[0].deviceId);
@@ -391,15 +386,21 @@
         });
       });
   </script>
-    
+  
+  <!-- <script src="main.js" ></script> -->
+
+  
+
+  <script type="module" src="main.js"></script>
+
   <script>
     
-    const localVideo = document.getElementById('localVideo');
+
     const remoteVideo = document.getElementById('remoteVideo');
 
     let ws;
 
-    let localStream;
+    
     let remoteStream;
     let peerConnection;
     const configuration = {
@@ -476,135 +477,21 @@
       // }
       // ------------------ video call front camera start ----------------------------
 
-    document.getElementById('joinButton').addEventListener('click', () => {
+    // document.getElementById('joinButton').addEventListener('click', () => {
       
-      createSession();
-
-
-    });
-
-    function createSession(session_hash=null) {
-      let sessionId = ""
-      if ( session_hash != null ){
-        sessionId = session_hash;
-      }else{
-        sessionId = document.getElementById('sessionId').value;
-      }
-       
-      console.log(window.location.hostname);
-
-      if ( window.location.protocol == "https:" ){
-        ws = new WebSocket(`wss://${window.location.hostname}:${window.location.port}?sessionId=${sessionId}`);
-      }else{
-        ws = new WebSocket(`ws://${window.location.hostname}:${window.location.port}?sessionId=${sessionId}`);
-      }
+      // let sessionIdInput =  document.getElementById('sessionId').value;
+      // if ( sessionIdInput !== '' ){
+      //   console.log("session id input ",sessionIdInput);
+      //   createSession(sessionIdInput);
+      // }else{
+      //   alert('Enter Session Id')
+      // }
       
-      console.log(ws);
-      ws.addEventListener('open', () => {
-        console.log('WebSocket connection opened');
-      });
-
-      ws.addEventListener('message', (message) => {
-
-        console.log(message.data);
-
-        message.data.text().then(text => {
-
-          const messages1 = document.getElementById('messages');
-          const message1 = document.createElement('li');
-          message1.textContent = text;
-          message1.classList.add('blue');
-          message1.classList.add('custom-send2');          
-          messages1.appendChild(message1);
-
-          const parsedMessage = JSON.parse(text);
-          handleSignalingData(parsedMessage);
-
-        });
-
-      });
-
-      ws.addEventListener('close', (event) => {
-        console.log('WebSocket connection closed:', event);
-        console.log('Code:', event.code, 'Reason:', event.reason);
-      });
 
 
-      ws.addEventListener('error', (error) => {
-        console.error('WebSocket error', error);
-      });
-    }
+    // });
 
-    function sendMessage() {
-        const input = document.getElementById('messageInput');
-        ws.send(input.value);
-        const messages = document.getElementById('messages');
-        const message = document.createElement('li');
-        message.textContent = input.value;
-        message.classList.add('blue');
-        message.classList.add('custom-send');
-        messages.appendChild(message);
-        input.value = '';
-    }
-
-        
-    function blobToJson(blob) {
-      return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-
-          reader.onload = () => {
-          try {
-              const json = JSON.parse(reader.result);
-              resolve(json);
-          } catch (error) {
-              reject(error);
-          }
-          };
-
-          reader.onerror = () => {
-          reject(reader.error);
-          };
-
-          reader.readAsText(blob);
-      });
-    }
-
-
-    function handleSignalingData(data) {
-      switch (data.type) {
-        case 'offer':
-          handleOffer(data.offer);
-          break;
-        case 'answer':
-          handleAnswer(data.answer);
-          break;
-        case 'candidate':
-          handleCandidate(data.candidate);
-          break;
-        default:
-          break;
-      }
-    }
-
-    function handleOffer(offer) {
-      createPeerConnection();
-      peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
-      peerConnection.createAnswer()
-        .then(answer => {
-          peerConnection.setLocalDescription(answer);
-          ws.send(JSON.stringify({ type: 'answer', answer }));
-        })
-        .catch(error => console.error('Error creating answer', error));
-    }
-
-    function handleAnswer(answer) {
-      peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-    }
-
-    function handleCandidate(candidate) {
-      peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-    }
-
+    
 
 
     document.getElementById('callButton').addEventListener('click', () => {
@@ -616,7 +503,11 @@
           ws.send(JSON.stringify({ type: 'offer', offer }));
           alert('offer send');
         })
-        .catch(error => console.error('Error creating offer', error));
+        .catch(error =>{
+        
+          console.error('Error creating offer', error)
+          
+        });
     });
 
 
@@ -674,13 +565,50 @@
 
       peerConnection.addEventListener('track', event => {
         remoteVideo.srcObject = event.streams[0];
+        remoteVideo.style.zIndex = 2;
+        localVideo.style.zIndex = 3;
       });
 
-      localStream.getTracks().forEach(track => {
-        peerConnection.addTrack(track, localStream);
-      });
+      // setLocalCameraForCall().then(()=>{
+
+        localStream.getTracks().forEach(track => {
+          peerConnection.addTrack(track, localStream);
+        });
+
+      // });
+
     }
 
+    function disconnectCall(){
+      // stop all the tracks and ICE candidates associated with the connection
+      // Stopping the media tracks ensures that the user's camera and microphone are no longer active
+      // After closing the connection, you may also want to remove any event listeners to prevent unwanted behavior
+
+      if (peerConnection) {
+        peerConnection.close();
+        peerConnection.onicecandidate = null;
+        peerConnection.ontrack = null;
+        peerConnection.oniceconnectionstatechange = null;
+      }
+
+      if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+      }
+
+      if (remoteStream) {
+          remoteStream.getTracks().forEach(track => track.stop());
+      }
+
+
+      ws.send(JSON.stringify({ type: 'callDisconnected' }));
+      alert('call disconnected');
+
+      remoteVideo.style.zIndex = "";
+      localVideo.style.zIndex = "";
+      remoteVideo.style.display = "none";
+       
+    } 
+    
     // document.getElementById('callButton').addEventListener('click', () => {
     //   createPeerConnection();
 
