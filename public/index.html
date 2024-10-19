@@ -171,6 +171,11 @@
       justify-content: center;
       align-items: center;
       background: #8d8d8d;
+      /* display: none; */
+    }
+    #remoteVideo-outer{
+      display: flex;
+      justify-content: center;
     }
   </style>
 </head>
@@ -203,7 +208,7 @@
   </div>
   <div id="remoteVideo-outer" >
     <video id="remoteVideo" autoplay></video>
-    <button style="position: fixed;z-index: 4;" onclick="disconnectCall()" >Cut the call</button>
+    <button id="remoteVideoCutButton" class="btn red" style="position: fixed;z-index: 4;top: 74%;margin: auto;display: none;" onclick="disconnectCall()" >Cut</button>
   </div>
   
 
@@ -285,11 +290,13 @@
     // function setLocalCameraForCall(){
     //   return new Promise ( (res,rej) => {
 
+      function setLocalStream(){
         navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         .then(stream => {
           // return stream;
           localVideo.srcObject = stream;
           localStream = stream;
+          console.log('localstream set');
           // res();
           // ws.addEventListener('open', () => {
           //   console.log('WebSocket connection opened');
@@ -300,6 +307,10 @@
           console.error('Error accessing media devices.', error)
           // rej();
         });
+      }
+
+      setLocalStream();
+
 
     //   } )
       
@@ -397,10 +408,10 @@
     
 
     const remoteVideo = document.getElementById('remoteVideo');
+    const remoteVideoCutButton = document.getElementById('remoteVideoCutButton');
 
     let ws;
 
-    
     let remoteStream;
     let peerConnection;
     const configuration = {
@@ -410,88 +421,6 @@
         }
       ]
     };
-
-    // navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-    //   .then(stream => {
-    //     localVideo.srcObject = stream;
-    //     localStream = stream;
-
-    //     // ws.addEventListener('open', () => {
-    //     //   console.log('WebSocket connection opened');
-    //     // });
-    //   })
-    //   .catch(error => console.error('Error accessing media devices.', error));
-
-      // Check if the MediaDevices API is supported
-      // ------------------ video call front camera start ----------------------------
-      // if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-      //   // Get all media devices (including cameras)
-      //   navigator.mediaDevices.enumerateDevices()
-      //     .then(devices => {
-      //       // Filter out video input devices (cameras)
-      //       const videoDevices = devices.filter(device => device.kind === 'videoinput');
-            
-      //       // Log available cameras
-      //       console.error('Available cameras:', videoDevices);
-      //       // alert('Available cameras:', videoDevices);
-
-      //       // Select a camera (e.g., the first one)
-      //       if (videoDevices.length > 0) {
-      //         const cameraId = videoDevices[0].deviceId;
-
-      //         // Access the selected camera
-      //         navigator.mediaDevices.getUserMedia({
-      //           video: {
-      //             deviceId: cameraId
-      //           }
-      //         })
-      //         .then(stream => {
-      //           // Display the camera stream in a video element
-      //           // const videoElement = document.querySelector('video');
-      //           if (localVideo) {
-      //             localVideo.srcObject = stream;
-      //             // localVideo.play();
-      //             localStream = stream;
-      //             // ws.addEventListener('open', () => {
-      //             //   console.log('WebSocket connection opened');
-      //             // });
-      //           }
-      //         })
-      //         .catch(err => {
-      //           // console.error('Error accessing the camera:', err);
-      //           console.error('Error accessing the camera:', err);
-      //           alert('Error accessing the camera:', err);
-      //         });
-      //       } else {
-      //         console.error('No cameras found.');
-      //         alert('No cameras found.');
-      //       }
-      //     })
-      //     .catch(err => {
-      //       console.error('Error enumerating devices:', err);
-      //       alert('Error enumerating devices:', err);
-      //     });
-      // } else {
-      //   console.error('MediaDevices API not supported in this browser.');
-      //   alert('MediaDevices API not supported in this browser.');
-      // }
-      // ------------------ video call front camera start ----------------------------
-
-    // document.getElementById('joinButton').addEventListener('click', () => {
-      
-      // let sessionIdInput =  document.getElementById('sessionId').value;
-      // if ( sessionIdInput !== '' ){
-      //   console.log("session id input ",sessionIdInput);
-      //   createSession(sessionIdInput);
-      // }else{
-      //   alert('Enter Session Id')
-      // }
-      
-
-
-    // });
-
-    
 
 
     document.getElementById('callButton').addEventListener('click', () => {
@@ -512,48 +441,6 @@
 
 
 
-    // ws.addEventListener('message', (message) => {
-    //   // const parsedMessage = JSON.parse(message.data);
-    //   // switch (parsedMessage.type) {
-    //   //   case 'offer':
-    //   //     createPeerConnection();
-    //   //     peerConnection.setRemoteDescription(new RTCSessionDescription(parsedMessage.offer));
-    //   //     peerConnection.createAnswer()
-    //   //       .then(answer => {
-    //   //         peerConnection.setLocalDescription(answer);
-    //   //         ws.send(JSON.stringify({ type: 'answer', answer }));
-    //   //       });
-    //   //     break;
-    //   //   case 'answer':
-    //   //     peerConnection.setRemoteDescription(new RTCSessionDescription(parsedMessage.answer));
-    //   //     break;
-    //   //   case 'candidate':
-    //   //     peerConnection.addIceCandidate(new RTCIceCandidate(parsedMessage.candidate));
-    //   //     break;
-    //   // }
-
-    //   message.data.text().then(text => {
-    //     const parsedMessage = JSON.parse(text);
-    //     switch (parsedMessage.type) {
-    //       case 'offer':
-    //         createPeerConnection();
-    //         peerConnection.setRemoteDescription(new RTCSessionDescription(parsedMessage.offer));
-    //         peerConnection.createAnswer()
-    //           .then(answer => {
-    //             peerConnection.setLocalDescription(answer);
-    //             ws.send(JSON.stringify({ type: 'answer', answer }));
-    //           });
-    //         break;
-    //       case 'answer':
-    //         peerConnection.setRemoteDescription(new RTCSessionDescription(parsedMessage.answer));
-    //         break;
-    //       case 'candidate':
-    //         peerConnection.addIceCandidate(new RTCIceCandidate(parsedMessage.candidate));
-    //         break;
-    //     }
-    //   });
-    // });
-
     function createPeerConnection() {
       peerConnection = new RTCPeerConnection(configuration);
 
@@ -566,7 +453,11 @@
       peerConnection.addEventListener('track', event => {
         remoteVideo.srcObject = event.streams[0];
         remoteVideo.style.zIndex = 2;
+        remoteVideo.style.display = "";
+        remoteVideoCutButton.style.zIndex = 3;
+        remoteVideoCutButton.style.display = "";
         localVideo.style.zIndex = 3;
+
       });
 
       // setLocalCameraForCall().then(()=>{
@@ -574,6 +465,9 @@
         localStream.getTracks().forEach(track => {
           peerConnection.addTrack(track, localStream);
         });
+
+        remoteVideo.style.display = "";
+        
 
       // });
 
@@ -591,13 +485,13 @@
         peerConnection.oniceconnectionstatechange = null;
       }
 
-      if (localStream) {
-        localStream.getTracks().forEach(track => track.stop());
-      }
+      // if (localStream) {
+      //   localStream.getTracks().forEach(track => track.stop());
+      // }
 
-      if (remoteStream) {
-          remoteStream.getTracks().forEach(track => track.stop());
-      }
+      // if (remoteStream) {
+      //     remoteStream.getTracks().forEach(track => track.stop());
+      // }
 
 
       ws.send(JSON.stringify({ type: 'callDisconnected' }));
@@ -606,6 +500,10 @@
       remoteVideo.style.zIndex = "";
       localVideo.style.zIndex = "";
       remoteVideo.style.display = "none";
+      remoteVideoCutButton.style.zIndex = "";
+      remoteVideoCutButton.style.display = "none";
+
+      // setLocalStream();
        
     } 
     

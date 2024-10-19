@@ -320,17 +320,18 @@ export class CallingController {
         peerConnection.oniceconnectionstatechange = null;
       }
 
-      if (localStream) {
-        localStream.getTracks().forEach(track => track.stop());
-      }
+      // if (localStream) {
+      //   localStream.getTracks().forEach(track => track.stop());
+      // }
 
-      if (remoteStream) {
-          remoteStream.getTracks().forEach(track => track.stop());
-      }
+      // if (remoteStream) {
+      //     remoteStream.getTracks().forEach(track => track.stop());
+      // }
 
       remoteVideo.style.zIndex = "";
       localVideo.style.zIndex = "";
       remoteVideo.style.display = "none";
+      remoteVideoCutButton.style.display = "none";
 
        
     } 
