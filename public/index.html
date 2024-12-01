@@ -5,257 +5,93 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calling App</title>
   <link rel="stylesheet" href="/css/materialize.min.css">
+  <link rel="stylesheet" href="/mainstyle.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-  <style>
-    .right_float{
-      right: 0;
-    }
-    .icon-button {
-      display: inline-flex; /* Align with text */
-      align-items: center; /* Center vertically */
-      background-color: transparent; /* No background */
-      border: none; /* Remove default border */
-      cursor: pointer; /* Pointer cursor */
-      color: inherit; /* Inherit text color */
-      text-decoration: none; /* Remove underline */
-    }
 
-    .icon-button:hover {
-      color: #26a69a; /* Change color on hover */
-    }
-
-    .fixed-bottom {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      z-index: 1; /* Ensures it is above other content */
-    }
-    .custom-send{
-      padding: 10px;
-      color: white;
-      border-radius: 8px 8px 0px 8px;
-      margin: 10px 10px 10px 90px;
-    }
-
-    .custom-send2{
-      padding: 10px;
-      color: white;
-      border-radius: 8px 8px 8px 0px;
-      margin: 10px 90px 10px 10px;
-    }
-    .localvideostream{
-      z-index: -1;
-      position: fixed;
-      bottom: 6rem;
-      top: auto;
-      left: auto;
-      right: 3rem;
-      width: 13rem;
-      height: auto;
-      border-radius: 4px;
-      object-fit: cover;
-      /* /* z-index: 999999; * */
-    }
-    .home{
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: -1;
-      background: white;
-    }
-    .customer_three_dot_button_changes{
-      top: 23px;
-      height: min-content;
-    }
-    #dropdown1 {
-      visibility: visible !important;
-      bottom: auto;
-      width: 140px !important;
-      left: -80px !important;
-    }
-
-    #dropdown1 li a {
-      color: black;
-      font-weight: 600;
-    }
-
-    #scanQrCode{
-      /* height: 100vh; */
-      width: 100vw;
-      /* z-index: 9998; */
-      position: fixed;
-      top: 0;
-      /* left: 0;
-      /* background: #ffffff; */
-      right: 0;
-      /* display: none; */
-      top: 7rem;
-      height: 21vh;
-      width: 54vw;
-      display: none;
-    }
-
-    .closecamerabutton{
-      z-index: 9999;
-      position: fixed;
-      top: 3rem;
-      right: 2rem;
-      display: none;
-    }
-    
-    
-    #qrtoscan{
-      position: fixed;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-    }
-
-    .qrtoscanOuter{
-      background: #ffffff;
-      width: 100vw;
-      height: 100vh;
-      z-index: 9998;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      display: none;
-    }
-
-    .qrtoscanOuter #qrtoscan{
-      width: 100vw;
-    }
-
-    .closeqrbutton{
-      z-index: 9999;
-      position: fixed;
-      top: 3rem;
-      right: 2rem;
-      display: none;
-    }
-
-    .custom-bold {
-      font-weight: bold;
-    }
-    #outer-join-room{
-      width: 100vw;
-      z-index: 2;
-      position: fixed;
-      height: 100vh;
-      background: #3f9de7;
-      display: flex;
-      align-items: center;
-      flex-direction: column;
-      justify-content: center;
-    }
-    #sessionId{
-      width: 75%;
-    }
-    #joinButton{
-      margin-left: 10px;
-    }
-    #remoteVideo{
-      z-index: -2;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #8d8d8d;
-      /* display: none; */
-    }
-    #remoteVideo-outer{
-      display: flex;
-      justify-content: center;
-    }
-  </style>
 </head>
+
+
 <body>
   <!-- <h3 >Calling App</h3> -->
 
-  <div id="outer-join-room" >
-    <input id="sessionId"  type="text" placeholder="Enter Session ID">
-    <div><button id="CancelStringJoin" onclick="controller.cancelJoinRoomWithSession()" class="btn red ml2">Cancel</button><button id="joinButton" onclick="controller.joinRoomWithSession()" class="btn blue">Join</button></div>
-  </div>
-  <button id="callButton" class="btn grey lighten-2 black-text custom-bold" >Start Call</button> 
+  <div class="main-body" >
 
-  <div class="fixed-action-btn customer_three_dot_button_changes">
-    <a class="btn-floating btn-large blue dropdown-trigger" data-target="dropdown1" >
-      <i class="material-icons">more_vert</i>
-    </a>
-    <ul id="dropdown1"  class="dropdown-content">
-      <li><a onclick="controller.showcamera()">Scan QR</a></li>
-      <li><a onclick='controller.ShowQr()'>Show QR</a></li>
-      <li><a onclick='controller.JoinRoom()'>Join Room</a></li>
-    </ul>
-  </div>
-
-  <img src="" alt="">
-
-  <video id="localVideo" class="localvideostream" autoplay muted></video>
+    <div id="outer-join-room" >
+      <input id="sessionId"  type="text" placeholder="Enter Session ID">
+      <div><button id="CancelStringJoin" onclick="controller.cancelJoinRoomWithSession()" class="btn red ml2">Cancel</button><button id="joinButton" onclick="controller.joinRoomWithSession()" class="btn blue">Join</button></div>
+    </div>
+    <button id="callButton" class="btn grey lighten-2 black-text custom-bold" >Start Call</button> 
   
-  <div class="home">
-
-  </div>
-  <div id="remoteVideo-outer" >
-    <video id="remoteVideo" autoplay></video>
-    <button id="remoteVideoCutButton" class="btn red" style="position: fixed;z-index: 4;top: 74%;margin: auto;display: none;" onclick="disconnectCall()" >Cut</button>
-  </div>
+    <div class="fixed-action-btn customer_three_dot_button_changes">
+      <a class="btn-floating btn-large blue dropdown-trigger" data-target="dropdown1" >
+        <i class="material-icons">more_vert</i>
+      </a>
+      <ul id="dropdown1"  class="dropdown-content">
+        <li><a onclick="controller.showcamera()">Scan QR</a></li>
+        <li><a onclick='controller.ShowQr()'>Show QR</a></li>
+        <li><a onclick='controller.JoinRoom()'>Join Room</a></li>
+      </ul>
+    </div>
   
-
-
-  <a onclick="controller.closeCamera()" class="btn-floating red closecamerabutton">
-    <i class="material-icons">close</i>
-  </a>
-  <video id="scanQrCode" width="400" height="300" autoplay></video>
-  <canvas id="canvas" hidden></canvas>
-
-
-  <!-- <button id="fetchqr">Fetch QR</button> -->
-   <div class="qrtoscanOuter">
-    <a onclick="controller.closeQr()" class="btn-floating red closeqrbutton">
-      <i class="material-icons">close</i>
-    </a>
-    <img id="qrtoscan"  />
-   </div>
+    <img src="" alt="">
+    <video id="localVideo" class="localvideostream" autoplay muted></video>
+    
+    <div class="home">
   
-  <!-- <input id="messageInput" type="text" placeholder="Type a message..." /> -->
-  <div class="row">
-    <form class="col s12">
-      <div class="row">
-        <div class="input-field col s12 fixed-bottom" style="background: white;margin: 0.8rem 0rem;">
-          <i class="material-icons prefix right_float icon-button" onclick="controller.sendMessage()">send</i>
-          <textarea id="messageInput" class="materialize-textarea" style="margin: 0;" spellcheck="false"></textarea>
-          <label for="messageInput" style="margin: 0;">Message</label>
-        </div>
+    </div>
+  
+    <div id="remoteVideo-outer" >
+      <video id="remoteVideo" autoplay></video>
+      <button id="remoteVideoCutButton" class="btn red" style="position: fixed;z-index: 4;top: 74%;margin: auto;display: none;" onclick="disconnectCall()" >Cut</button>
+    </div>
+    
+  
+    <div class="qrCode-outer" >
+      <a onclick="controller.closeCamera()" class="btn-floating red closecamerabutton">
+        <i class="material-icons">close</i>
+      </a>
+      <video id="scanQrCode" width="400" height="300" autoplay></video>
+      <canvas id="canvas" hidden></canvas>
+    </div>
+
+    <div class="qrtoscanOuter">
+      <a onclick="controller.closeQr()" class="btn-floating red closeqrbutton">
+        <i class="material-icons">close</i>
+      </a>
+      <img id="qrtoscan"  />
+     </div>
+
+     <ul id="messages"></ul>
+
+     <div class="send-message" >
+      <div class="row ">
+        <form class="col s12">
+          <div class="row">
+            <div class=" col s12 fixed-bottom" style="margin: 0.8rem 0rem;">
+              <div class="text-area-outer input-field send-message-elements " >
+                <i class="material-icons prefix right_float icon-button" onclick="controller.sendMessage()">send</i>
+                <textarea id="messageInput" class="materialize-textarea" placeholder="Message"  spellcheck="false"></textarea>
+                <!-- <label id="lable-text-input" for="messageInput" >Message</label> -->
+              </div>
+              
+            </div>
+          </div>
+        </form>
       </div>
-    </form>
+     </div>
+    
+
   </div>
-  <!-- <button onclick="sendMessage()">Send</button> -->
-  <ul id="messages"></ul>
-  <!-- <div id="error"></div> -->
-  <!-- <button id="callButton">Start Call</button> -->
+
+  
+
+
+
+
   <script src="/js/materialize.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 
-  <script>
-
-  
-
-    
-    // document.getElementById('fetchqr').onclick = function() 
-    
-
-  </script>
 
   <script>
     const video = document.getElementById('scanQrCode');
@@ -281,7 +117,7 @@
         })
         .catch(err => {
           console.error('Error accessing the camera:', err);
-          alert('Error accessing the QR camera:', err);
+          // alert('Error accessing the QR camera:', err);
         });
     }
     
@@ -398,14 +234,11 @@
       });
   </script>
   
-  <!-- <script src="main.js" ></script> -->
-
   
 
   <script type="module" src="main.js"></script>
 
   <script>
-    
 
     const remoteVideo = document.getElementById('remoteVideo');
     const remoteVideoCutButton = document.getElementById('remoteVideoCutButton');

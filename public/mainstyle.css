@@ -1,0 +1,209 @@
+
+.right_float{
+  right: 0;
+}
+.icon-button {
+  display: inline-flex; 
+  align-items: center; 
+  background-color: transparent; 
+  border: none; 
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+  margin: 6px 7px;
+  margin-top: 10px;
+}
+
+.icon-button:hover {
+  color: #26a69a; /* Change color on hover */
+}
+
+.fixed-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1; /* Ensures it is above other content */
+}
+.custom-send{
+  padding: 10px;
+  color: white;
+  border-radius: 8px 8px 0px 8px;
+  margin: 10px 10px 10px 90px;
+}
+
+.custom-send2{
+  padding: 10px;
+  color: white;
+  border-radius: 8px 8px 8px 0px;
+  margin: 10px 90px 10px 10px;
+}
+.localvideostream{
+  z-index: -1;
+  position: fixed;
+  bottom: 6rem;
+  top: auto;
+  left: auto;
+  right: 3rem;
+  width: 13rem;
+  height: auto;
+  border-radius: 4px;
+  object-fit: cover;
+  /* /* z-index: 999999; * */
+}
+.home{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  background: white;
+}
+.customer_three_dot_button_changes{
+  top: 23px;
+  height: min-content;
+}
+#dropdown1 {
+  visibility: visible !important;
+  bottom: auto;
+  width: 140px !important;
+  left: -80px !important;
+}
+
+#dropdown1 li a {
+  color: black;
+  font-weight: 600;
+}
+
+#scanQrCode{
+  /* height: 100vh; */
+  width: 100vw;
+  /* z-index: 9998; */
+  position: fixed;
+  top: 0;
+  /* left: 0;
+  /* background: #ffffff; */
+  right: 0;
+  /* display: none; */
+  top: 7rem;
+  height: 21vh;
+  width: 54vw;
+  display: none;
+}
+
+.closecamerabutton{
+  z-index: 9999;
+  position: fixed;
+  top: 3rem;
+  right: 2rem;
+  display: none;
+}
+
+
+#qrtoscan{
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.qrtoscanOuter{
+  background: #ffffff;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9998;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: none;
+}
+
+.qrtoscanOuter #qrtoscan{
+  width: 100vw;
+}
+
+.closeqrbutton{
+  z-index: 9999;
+  position: fixed;
+  top: 3rem;
+  right: 2rem;
+  display: none;
+}
+
+.custom-bold {
+  font-weight: bold;
+}
+#outer-join-room{
+  width: 100vw;
+  z-index: 2;
+  position: fixed;
+  height: 100vh;
+  background: #3f9de7;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+#sessionId{
+  width: 75%;
+}
+#joinButton{
+  margin-left: 10px;
+}
+#remoteVideo{
+  z-index: -2;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* background: #8d8d8d; */
+  /* display: none; */
+}
+#remoteVideo-outer{
+  display: flex;
+  justify-content: center;
+}
+
+.main-body{
+    background: grey;
+    height: 100vh;
+}
+
+.send-message-elements{
+    background: white;
+    border-radius: 20px;
+    padding-top: 8px;
+    margin-bottom: 0;
+}
+
+#lable-text-input{
+    margin-left: 17px;
+    margin-top: 12px;
+    -webkit-transform: translateY(7px) scale(1);
+    transform: translateY(7px) scale(1);
+}
+
+#messageInput{
+    margin-left: 17px;
+    height: 43px;
+    margin-bottom: 5px;
+    border: none;
+}
+
+#messageInput:focus{
+    border: none;
+    box-shadow: none;
+}
+
+
+#messageInput::placeholder {
+    color: #9e9e9e;
+  }
+  
