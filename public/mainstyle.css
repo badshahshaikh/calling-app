@@ -209,12 +209,23 @@
   }
   
 .messages-container{
-  height: 79vh;
+  margin-top: 7vh;
+  height: 77vh;
   background: #d9d9d9;
   border-radius: 19px;
 }
 
+
+
 #messages{
   height: 79vh;
   overflow: scroll;
+}
+
+.threeDotsForOptions{
+  margin: 25px;
+}
+
+#callButton{
+  margin: 25px;
 }
