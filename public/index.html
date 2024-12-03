@@ -21,12 +21,17 @@
       <input id="sessionId"  type="text" placeholder="Enter Session ID">
       <div><button id="CancelStringJoin" onclick="controller.cancelJoinRoomWithSession()" class="btn red ml2">Cancel</button><button id="joinButton" onclick="controller.joinRoomWithSession()" class="btn blue">Join</button></div>
     </div>
-    <button id="callButton" class="btn grey lighten-2 black-text custom-bold" >Start Call</button> 
+    
   
-    <div class="fixed-action-btn customer_three_dot_button_changes">
-      <a class="btn-floating btn-large blue dropdown-trigger" data-target="dropdown1" >
+    <div class=" customer_three_dot_button_changes">
+      
+      <a class=" dropdown-trigger right" data-target="dropdown1" >
         <i class="material-icons">more_vert</i>
       </a>
+      <a id="callButton" class=" dropdown-trigger right" data-target="dropdown1" >
+        <i class="material-icons">phone</i>
+      </a>
+      <!-- <button  class="btn grey lighten-2 black-text custom-bold right" >Start Call</button>  -->
       <ul id="dropdown1"  class="dropdown-content">
         <li><a onclick="controller.showcamera()">Scan QR</a></li>
         <li><a onclick='controller.ShowQr()'>Show QR</a></li>
@@ -60,9 +65,15 @@
         <i class="material-icons">close</i>
       </a>
       <img id="qrtoscan"  />
-     </div>
+    </div>
 
-     <ul id="messages"></ul>
+    <div class="messages-container">
+      <div class="messages-outer">
+        <ul id="messages"></ul>
+      </div>
+    </div>
+
+     
 
      <div class="send-message" >
       <div class="row ">

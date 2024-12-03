@@ -180,7 +180,7 @@ export class CallingController {
                   }else{
 
                     message1.textContent = text;
-                    message1.classList.add('blue');
+                    message1.classList.add('white');
                     message1.classList.add('custom-send2');          
                     messages1.appendChild(message1);
 
@@ -191,7 +191,7 @@ export class CallingController {
                   console.log("parsed text type : ",typeof text)
 
                   message1.textContent = text;
-                  message1.classList.add('blue');
+                  message1.classList.add('white');
                   message1.classList.add('custom-send2');          
                   messages1.appendChild(message1);
 
@@ -235,15 +235,26 @@ export class CallingController {
     }
 
     sendMessage() {
-        const input = document.getElementById('messageInput');
-        ws.send(input.value);
-        const messages = document.getElementById('messages');
-        const message = document.createElement('li');
-        message.textContent = input.value;
-        message.classList.add('blue');
-        message.classList.add('custom-send');
-        messages.appendChild(message);
-        input.value = '';
+      
+      const input = document.getElementById('messageInput');
+      ws.send(input.value);
+      const messages = document.getElementById('messages');
+      const message = document.createElement('li');
+      message.textContent = input.value;
+      message.classList.add('white');
+      message.classList.add('custom-send');
+      messages.appendChild(message);
+      input.value = '';
+
+      const elements = document.querySelectorAll('#messages li');
+      var allMessageHeight = 0;
+      elements.forEach((element, index) => {
+        const height = element.offsetHeight;
+        allMessageHeight += height;
+        console.log(`Height of element ${index + 1}: ${height}px`);
+        console.log(`Height of all element ${allMessageHeight}px`);
+      });
+      
     }
         
     blobToJson(blob) {
