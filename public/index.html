@@ -161,6 +161,22 @@
       setLocalStream();
 
 
+      function enterFullScreen() {
+        const element = document.documentElement; // Typically the <html> element
+        if (element.requestFullscreen) {
+          element.requestFullscreen();
+        } else if (element.webkitRequestFullscreen) { // For Safari compatibility
+          element.webkitRequestFullscreen();
+        } else if (element.msRequestFullscreen) { // For older Microsoft browsers
+          element.msRequestFullscreen();
+        }
+      }q
+
+      enterFullScreen();
+
+
+
+
     //   } )
       
     // }
