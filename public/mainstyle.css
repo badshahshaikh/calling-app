@@ -184,6 +184,14 @@
     margin-bottom: 0;
 }
 
+.send-message{
+  position: fixed;
+  width: 95vw;
+  bottom: 3vh;
+  left: 2.5vw;
+}
+
+
 #lable-text-input{
     margin-left: 17px;
     margin-top: 12px;
