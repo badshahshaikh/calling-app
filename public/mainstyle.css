@@ -210,7 +210,9 @@
   
 .messages-container{
   margin-top: 7vh;
-  height: 75%;
+  position: fixed;
+  height: 75vh;
+  width: 100vw;
   background: #d9d9d9;
   border-radius: 19px;
 }
