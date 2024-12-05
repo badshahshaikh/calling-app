@@ -157,10 +157,13 @@
 #remoteVideo{
   z-index: -2;
   position: fixed;
+  height: 75vh;
+  width: 100vw;
+  margin-top: 10vh;
+  border-radius: 19px;
+  background: black;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -48,10 +48,10 @@
   
     </div>
   
-    <div id="remoteVideo-outer" >
+    <!-- <div id="remoteVideo-outer" >
       <video id="remoteVideo" autoplay></video>
       <button id="remoteVideoCutButton" class="btn red" style="position: fixed;z-index: 4;top: 74%;margin: auto;display: none;" onclick="disconnectCall()" >Cut</button>
-    </div>
+    </div> -->
     
   
     <div class="qrCode-outer" >
@@ -70,7 +70,13 @@
     </div>
 
     <div class="messages-container">
-      <p id="myParagraph">Original text</p>
+      <!-- <p id="myParagraph">Original text</p> -->
+
+      <div id="remoteVideo-outer" >
+        <video id="remoteVideo" autoplay></video>
+        <button id="remoteVideoCutButton" class="btn red" style="position: fixed;z-index: 4;top: 74%;margin: auto;display: none;" onclick="disconnectCall()" >Cut</button>
+      </div>
+
       <div class="messages-outer">
         <ul id="messages"></ul>
       </div>
