@@ -70,6 +70,7 @@
     </div>
 
     <div class="messages-container">
+      <p id="myParagraph">Original text</p>
       <div class="messages-outer">
         <ul id="messages"></ul>
       </div>
@@ -108,6 +109,27 @@
 
 
   <script>
+
+    // ------------------- testing scroll ----------------------
+
+    const pTag = document.getElementById('myParagraph');
+
+    document.addEventListener('scroll', (event) => {
+        const target = event.target;
+
+        if (target === document) {
+            console.log('The document is being scrolled');
+            pTag.textContent += 'The document is being scrolled';
+        } else if (target === window) {
+            console.log('The window is being scrolled');
+            pTag.textContent += 'The window is being scrolled';
+        } else {
+            console.log('A specific element is being scrolled:', target);
+            pTag.textContent += 'A specific element is being scrolled:', target;
+        }
+    }, true); 
+
+
     const video = document.getElementById('scanQrCode');
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
