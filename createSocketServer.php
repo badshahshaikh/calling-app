@@ -41,7 +41,7 @@ class MyWebSocket implements MessageComponentInterface {
 $loop = Factory::create();
 
 // Create the base React socket
-$webSocket = new Server('0.0.0.0', $loop);
+$webSocket = new Server('3.124.177.12', $loop);
 
 // Wrap the React socket in a SecureServer for SSL
 $secureWebSocket = new SecureServer($webSocket, $loop, [
