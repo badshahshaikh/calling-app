@@ -44,8 +44,10 @@ $webSocket = new Server('0.0.0.0:8000', $loop);
 
 // Wrap the React socket in a SecureServer for SSL
 $secureWebSocket = new SecureServer($webSocket, $loop, [
-    'local_cert'  => 'ssl/csr.pem', 
-    'local_pk'    => 'ssl/privatekey.pem', 
+    'local_cert'  => '/etc/letsencrypt/live/chatnow.co.in-0001/fullchain.pem', 
+    'local_pk'    => '/etc/letsencrypt/live/chatnow.co.in-0001/privkey.pem', 
+    // key: fs.readFileSync('/etc/letsencrypt/live/chatnow.co.in-0001/privkey.pem'),
+    // cert: fs.readFileSync('/etc/letsencrypt/live/chatnow.co.in-0001/fullchain.pem')
     'allow_self_signed' => true,
     'verify_peer' => false
 ]);
