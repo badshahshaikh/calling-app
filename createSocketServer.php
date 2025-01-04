@@ -1,0 +1,64 @@
+<?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+require_once 'vendor/autoload.php';
+
+
+use Ratchet\MessageComponentInterface;
+use Ratchet\ConnectionInterface;
+use Ratchet\Http\HttpServer;
+use Ratchet\WebSocket\WsServer;
+use Ratchet\Server\IoServer;
+use React\EventLoop\Factory;
+use React\Socket\SecureServer;
+use React\Socket\Server;
+
+
+class MyWebSocket implements MessageComponentInterface {
+    public function onOpen(ConnectionInterface $conn) {
+        echo "New connection established ({$conn->resourceId})\n";
+    }
+
+    public function onMessage(ConnectionInterface $from, $msg) {
+        echo "Message received: $msg\n";
+        $from->send("You said: $msg");
+    }
+
+    public function onClose(ConnectionInterface $conn) {
+        echo "Connection {$conn->resourceId} closed\n";
+    }
+
+    public function onError(ConnectionInterface $conn, \Exception $e) {
+        echo "Error: " . $e->getMessage() . "\n";
+        $conn->close();
+    }
+}
+
+$loop = Factory::create();
+
+// Create the base React socket
+$webSocket = new Server('0.0.0.0:8000', $loop);
+
+// Wrap the React socket in a SecureServer for SSL
+$secureWebSocket = new SecureServer($webSocket, $loop, [
+    'local_cert'  => 'ssl/csr.pem', 
+    'local_pk'    => 'ssl/privatekey.pem', 
+    'allow_self_signed' => true,
+    'verify_peer' => false
+]);
+
+$app = new IoServer(
+    new HttpServer(
+        new WsServer(
+            new MyWebSocket()
+        )
+    ),
+    $secureWebSocket,
+    $loop
+);
+
+echo "WebSocket server running on wss://0.0.0.0:8000\n";
+$loop->run();
