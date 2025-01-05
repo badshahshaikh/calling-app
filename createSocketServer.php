@@ -7,61 +7,87 @@ error_reporting(E_ALL);
 require_once 'vendor/autoload.php';
 
 
+
+// Sample code for WebSocket integration using Ratchet
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
-use Ratchet\Http\HttpServer;
-use Ratchet\WebSocket\WsServer;
-use Ratchet\Server\IoServer;
-use React\EventLoop\Factory;
-use React\Socket\SecureServer;
-use React\Socket\Server;
-
-
-
-class MyWebSocket implements MessageComponentInterface {
+class WebSocketServer implements MessageComponentInterface {
     public function onOpen(ConnectionInterface $conn) {
-        echo "New connection established ({$conn->resourceId})\n";
+        // Handle WebSocket connection opening
+        echo "open";
     }
-
     public function onMessage(ConnectionInterface $from, $msg) {
-        echo "Message received: $msg\n";
-        $from->send("You said: $msg");
+        // Handle incoming WebSocket messages
+        echo " $msg ";
     }
-
     public function onClose(ConnectionInterface $conn) {
-        echo "Connection {$conn->resourceId} closed\n";
+        // Handle WebSocket connection closing
+        echo "Close";
     }
-
     public function onError(ConnectionInterface $conn, \Exception $e) {
-        echo "Error: " . $e->getMessage() . "\n";
-        $conn->close();
+        // Handle WebSocket errors
+        echo "error";
     }
 }
+// Create a WebSocket server
+$server = new \Ratchet\WebSocket\WsServer(new WebSocketServer());
+// Run the server
+$app = new \Ratchet\Http\HttpServer($server);
+\Ratchet\Server\IoServer::factory($app, 8080)->run();
 
-$loop = Factory::create();
 
-// Create the base React socket $webSocket = new Server('0.0.0.0:8000', $loop);
-$webSocket = new Server('0.0.0.0:8080', $loop);
 
-// Wrap the React socket in a SecureServer for SSL
-$secureWebSocket = new SecureServer($webSocket, $loop, [
-    'local_cert'  => '/etc/letsencrypt/live/chatnow.co.in-0001/fullchain.pem', 
-    'local_pk'    => '/etc/letsencrypt/live/chatnow.co.in-0001/privkey.pem', 
-    // key: fs.readFileSync('/etc/letsencrypt/live/chatnow.co.in-0001/privkey.pem'),
-    // cert: fs.readFileSync('/etc/letsencrypt/live/chatnow.co.in-0001/fullchain.pem')
-    'allow_self_signed' => true,
-    'verify_peer' => false
-]);
+// use Ratchet\MessageComponentInterface;
+// use Ratchet\ConnectionInterface;
 
-$app = new IoServer(
-    new HttpServer(
-        new WsServer(
-            new MyWebSocket()
-        )
-    ),
-    $secureWebSocket,
-    $loop
-);
 
-echo "WebSocket server running on wss://0.0.0.0:8000\n";
-$loop->run();
+
+// class MyWebSocket implements MessageComponentInterface {
+//     public function onOpen(ConnectionInterface $conn) {
+//         echo "New connection established ({$conn->resourceId})\n";
+//     }
+
+//     public function onMessage(ConnectionInterface $from, $msg) {
+//         echo "Message received: $msg\n";
+//         $from->send("You said: $msg");
+//     }
+
+//     public function onClose(ConnectionInterface $conn) {
+//         echo "Connection {$conn->resourceId} closed\n";
+//     }
+
+//     public function onError(ConnectionInterface $conn, \Exception $e) {
+//         echo "Error: " . $e->getMessage() . "\n";
+//         $conn->close();
+//     }
+// }
+
+// $loop = Factory::create();
+
+// // Create the base React socket
+// $webSocket = new Server('0.0.0.0:8000', $loop);
+
+// // Wrap the React socket in a SecureServer for SSL
+// $secureWebSocket = new SecureServer($webSocket, $loop, [
+//     'local_cert'  => '/etc/letsencrypt/live/chatnow.co.in-0001/fullchain.pem', 
+//     'local_pk'    => '/etc/letsencrypt/live/chatnow.co.in-0001/privkey.pem', 
+//     // key: fs.readFileSync('/etc/letsencrypt/live/chatnow.co.in-0001/privkey.pem'),
+//     // cert: fs.readFileSync('/etc/letsencrypt/live/chatnow.co.in-0001/fullchain.pem')
+//     'allow_self_signed' => true,
+//     'verify_peer' => false
+// ]);
+
+// $app = new IoServer(
+//     new HttpServer(
+//         new WsServer(
+//             new MyWebSocket()
+//         )
+//     ),
+//     $secureWebSocket,
+//     $loop
+// );
+
+// echo "WebSocket server running on wss://0.0.0.0:8000\n";
+// $loop->run();
+
+

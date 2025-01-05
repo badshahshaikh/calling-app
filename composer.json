@@ -1,5 +1,6 @@
 {
     "require": {
-        "minishlink/web-push": "^7.0"
+        "minishlink/web-push": "^7.0",
+        "cboden/ratchet": "^0.4.4"
     }
 }
