@@ -1,5 +1,6 @@
 // import translate from 'translate-google-api';
 
+import dotenv from 'dotenv';
 import fs from 'fs';
 import express from 'express';
 import http from 'http';
@@ -17,12 +18,51 @@ import { WebSocketServer, WebSocket } from 'ws';
 // // const translate = require('google-translate-api');
 // const translate = require('translate');
 
+dotenv.config();
 const app = express();
 
 // app.get('/',(req, res) => {
 //   res.json({check:`working`});
 // })
 
+
+
+
+if (process.env.NODE_ENV === 'development') {
+
+    // const app = express();
+    const server = http.createServer(app);
+    const wss = new WebSocketServer({ server })
+    const port = 5000;
+
+
+    
+
+    // translate 
+    // (async () => {
+    //   const textToTranslate = 'what are you doing right now I am doing my work';
+    //   const targetLanguage = 'hi'; 
+    //   try {
+    //     const result = await translate(textToTranslate, { to: targetLanguage });
+    //     console.log(`Translated text: ${result}`);
+    //   } catch (err) {
+    //     console.error('Error during translation:', err);
+    //   }
+    // })();
+
+
+
+
+
+
+
+
+
+    server.listen(8080, 'localhost', () => {
+      console.log(`Server running`);
+    });
+
+}else{
 
 
   let server = "";
@@ -114,16 +154,26 @@ const app = express();
   console.error('Server error:', error);
   });
 
+  if (process.env.NODE_ENV === 'Production'){
 
-server.listen(443, () => {
-    console.log('Server running on https://3.124.177.12 or http://chatnow.co.in');
-});
+    server.listen(443, () => {
+      console.log('Server running on https://3.124.177.12 or http://chatnow.co.in');
+    });
+
+  }else{
+
+    server.listen(80, () => {
+      console.log('listening on *:80 ');
+    });
+
+
+  }
 
 
 
 
 
-
+}
 
 
 
