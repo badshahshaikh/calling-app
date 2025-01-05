@@ -16,8 +16,10 @@ const app = express();
 
   let server = "";
     const options = {
-      key: fs.readFileSync('csr.pem'),
-      cert: fs.readFileSync('privatekey.pem')
+    //   key: fs.readFileSync('csr.pem'),
+    //   cert: fs.readFileSync('privatekey.pem')
+      key: fs.readFileSync('/var/www/html/Superadmin/my-nodejs-project/privatekey.pem'),
+      cert: fs.readFileSync('/var/www/html/Superadmin/my-nodejs-project/csr.pem'), 
     };
 
 
