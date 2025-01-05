@@ -18,8 +18,8 @@ const app = express();
     const options = {
     //   key: fs.readFileSync('csr.pem'),
     //   cert: fs.readFileSync('privatekey.pem')
-      key: fs.readFileSync('/var/www/html/Superadmin/my-nodejs-project/privatekey.pem'),
-      cert: fs.readFileSync('/var/www/html/Superadmin/my-nodejs-project/csr.pem'), 
+        key: fs.readFileSync('/etc/letsencrypt/live/chatnow.co.in-0001/privkey.pem'),
+        cert: fs.readFileSync('/etc/letsencrypt/live/chatnow.co.in-0001/fullchain.pem')
     };
 
 
