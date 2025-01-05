@@ -1,6 +1,5 @@
 // import translate from 'translate-google-api';
 
-import dotenv from 'dotenv';
 import fs from 'fs';
 import express from 'express';
 import http from 'http';
@@ -18,61 +17,12 @@ import { WebSocketServer, WebSocket } from 'ws';
 // // const translate = require('google-translate-api');
 // const translate = require('translate');
 
-dotenv.config();
 const app = express();
 
 // app.get('/',(req, res) => {
 //   res.json({check:`working`});
 // })
 
-app.get('/getUser', (req, res) => {
-  const qrData = req.query.data;
-  console.log("Received QR code data: ", qrData);
-  // chatnow.co.in/c95233fff58d00b3a6a76d55ba5412322f7d7571dbe85a098990a52c2740f7f6
-  res.json({ message: `QR code data received: ${qrData}` });
-
-
-})
-
-
-
-console.log('checking',process.env.NODE_ENV);
-
-if (process.env.NODE_ENV === 'development') {
-
-    // const app = express();
-    const server = http.createServer(app);
-    const wss = new WebSocketServer({ server })
-    const port = 5000;
-
-
-    
-
-    // translate 
-    // (async () => {
-    //   const textToTranslate = 'what are you doing right now I am doing my work';
-    //   const targetLanguage = 'hi'; 
-    //   try {
-    //     const result = await translate(textToTranslate, { to: targetLanguage });
-    //     console.log(`Translated text: ${result}`);
-    //   } catch (err) {
-    //     console.error('Error during translation:', err);
-    //   }
-    // })();
-
-
-
-
-
-
-
-
-
-    server.listen(8080, 'localhost', () => {
-      console.log(`Server running`);
-    });
-
-}else{
 
 
   let server = "";
@@ -182,8 +132,6 @@ if (process.env.NODE_ENV === 'development') {
 
 
 
-
-}
 
 
 
