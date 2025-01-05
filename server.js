@@ -114,20 +114,12 @@ const app = express();
   console.error('Server error:', error);
   });
 
-  if (process.env.NODE_ENV === 'Production'){
 
-    server.listen(443, () => {
-      console.log('Server running on https://3.124.177.12 or http://chatnow.co.in');
-    });
-
-  }else{
-
-    server.listen(80, () => {
-      console.log('listening on *:80 ');
-    });
+server.listen(443, () => {
+    console.log('Server running on https://3.124.177.12 or http://chatnow.co.in');
+});
 
 
-  }
 
 
 
