@@ -6,8 +6,6 @@ import express from 'express';
 import http from 'http';
 import https from 'https';
 import url from 'url';
-import QRCode from 'qrcode';
-import crypto from 'crypto';
 // import WebSocket from 'ws';
 import { WebSocketServer, WebSocket } from 'ws';
 // require('dotenv').config();
@@ -36,29 +34,6 @@ app.get('/getUser', (req, res) => {
 
 })
 
-
-    // for getting the clients IP address
-    app.get('/getQR', (req, res) => {
-      const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-      // console.log("Client IP address:", clientIp);
-      // hash the Ip address
-      const ipAddress = clientIp;
-      const hash = crypto.createHash('sha256').update(ipAddress).digest('hex');
-      console.log('Hashed IP address:', hash);
-      // res.send(`Client IP address: ${clientIp}`);
-      
-      // generate embaded qr code 
-      const data = "chatnow.co.in/"+hash;
-      QRCode.toDataURL(data)
-        .then((url) => {
-          res.send({url:`${url}`,sessionlink:`${data}`});
-          // console.log('QR code Data URL:', url);
-        })
-        .catch((err) => {
-          console.error('Error generating QR code:', err);
-        });
-
-    });
 
 
 console.log('checking',process.env.NODE_ENV);
